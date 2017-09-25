@@ -14,9 +14,21 @@ public class PageLayoutService
 	public static final String ANCHOR_TYPE_AFTER = 'After';
 	public static final String ANCHOR_TYPE_END = 'End';
 
-	public PageLayoutService.Response classicUpdateLayout(PageLayoutService.Request request)
+	public PageLayoutService.Response updateLayout(PageLayoutService.Request request)
 	{
-		return new NativePageLayoutUpdater().updateLayout(request);
+		if (request.Strategy == STRATEGY_CLASSIC)
+		{
+			return new NativePageLayoutUpdater().updateLayout(request);
+		}
+		
+		if (request.Strategy == STRATEGY_NATIVE)
+		{
+			return new NativePageLayoutUpdater().updateLayout(request);
+		}
+		
+		return new PageLayoutService.Response()
+			.withSuccess(false)
+			.withMessage('Unknown strategy: ' + request.Strategy);
 	}
 
 	public class Request
