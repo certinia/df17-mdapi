@@ -32,11 +32,6 @@ public class NativePageLayoutUpdater
 
 	private void validate()
 	{
-		if (this.request.Strategy != PageLayoutService.STRATEGY_CLASSIC)
-		{
-			throw new PageLayoutService.PageLayoutException('Unsupported Strategy: ' + this.request.Strategy);
-		}
-		
 		if (this.request.Operation != PageLayoutService.OPERATION_ADD)
 		{
 			throw new PageLayoutService.PageLayoutException('Unsupported Operation: ' + this.request.Operation);
