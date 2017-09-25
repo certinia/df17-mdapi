@@ -1,11 +1,14 @@
 {
-  "packageDirectories": [
-    {
-      "path": "force",
-      "default": true
-    }
-  ],
-  "namespace": "",
-  "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "40.0"
+	"packageDirectories": [{
+			"path": "force",
+			"default": true
+		},
+		{
+			"path": "classic-mdapi",
+			"default": false
+		}
+	],
+	"namespace": "",
+	"sfdcLoginUrl": "https://login.salesforce.com",
+	"sourceApiVersion": "40.0"
 }
