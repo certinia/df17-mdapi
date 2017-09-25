@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomApplication xmlns="http://soap.sforce.com/2006/04/metadata">
+    <brand>
+        <headerColor>#0A009B</headerColor>
+    </brand>
+    <description>Demonstrates Page Layout updates through Metadata API</description>
+    <formFactors>Large</formFactors>
+    <label>Page Layouts Demo</label>
+    <navType>Standard</navType>
+    <tab>standard-Account</tab>
+    <tab>standard-Contact</tab>
+    <tab>standard-Opportunity</tab>
+    <uiType>Lightning</uiType>
+    <utilityBar>Page_Layouts_Demo_UtilityBar</utilityBar>
+</CustomApplication>
