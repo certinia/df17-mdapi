@@ -42,7 +42,7 @@ public class NativePageLayoutUpdater
 			throw new PageLayoutService.PageLayoutException('Unsupported Operation: ' + this.request.Operation);
 		}
 		
-		if (this.request.AnchorType != PageLayoutService.ANCHOR_TYPE_END)
+		if (this.request.AnchorType != PageLayoutService.ANCHOR_TYPE_START)
 		{
 			throw new PageLayoutService.PageLayoutException('Unsupported AnchorType: ' + this.request.AnchorType);
 		}
@@ -71,13 +71,13 @@ public class NativePageLayoutUpdater
 			throw new PageLayoutService.PageLayoutException('Field ' + this.request.Field + 'already present in layout ' + this.request.LayoutName);
 		}
 
-		Metadata.LayoutColumn finalColumn = findFinalColumn();
-		if (finalColumn.layoutItems == null)
+		Metadata.LayoutColumn firstColumn = findFirstColumn();
+		if (firstColumn.layoutItems == null)
 		{
-			finalColumn.layoutItems = new Metadata.LayoutItem[]{};
+			firstColumn.layoutItems = new Metadata.LayoutItem[]{};
 		}
 
-		finalColumn.layoutItems.add(this.request.asField());
+		firstColumn.layoutItems.add(0, this.request.asField());
 	}
 
 	private Metadata.LayoutItem findFieldFromLayout()
@@ -102,13 +102,10 @@ public class NativePageLayoutUpdater
 		return null;
 	}
 
-	private Metadata.LayoutColumn findFinalColumn()
+	private Metadata.LayoutColumn findFirstColumn()
 	{
-		Integer lengthSections = this.layout.layoutSections.size();
-		Metadata.LayoutSection finalSection = this.layout.layoutSections[lengthSections - 1];
-
-		Integer lengthColumns = finalSection.layoutColumns.size();
-		return finalSection.layoutColumns[lengthColumns - 1];
+		Metadata.LayoutSection firstSection = this.layout.layoutSections[0];
+		return firstSection.layoutColumns[0];
 	}
 
 	private Id saveLayout()
@@ -123,7 +120,7 @@ public class NativePageLayoutUpdater
 	{
 		public void handleResult(Metadata.DeployResult result, Metadata.DeployCallbackContext context)
 		{
-        	System.debug(result.success);
+        	System.debug('Status: ' + result.status + '. ErrorCode: ' + result.errorStatusCode + '. Errors: ' + result.errorMessage);
         }
 	}
 }
