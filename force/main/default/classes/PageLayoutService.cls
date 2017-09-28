@@ -3,16 +3,16 @@
  */
 public class PageLayoutService
 {
-	public static final String STRATEGY_CLASSIC = 'Classic';
-	public static final String STRATEGY_NATIVE = 'Native';
+	public static final String STRATEGY_CLASSIC = 'Strategy_Classic';
+	public static final String STRATEGY_NATIVE = 'Strategy_Native';
 	
-	public static final String OPERATION_ADD = 'Add';
-	public static final String OPERATION_REMOVE = 'Remove';
+	public static final String OPERATION_ADD = 'Operation_Add';
+	public static final String OPERATION_REMOVE = 'Operation_Remove';
 	
-	public static final String ANCHOR_TYPE_START = 'Start';
-	public static final String ANCHOR_TYPE_BEFORE = 'Before';
-	public static final String ANCHOR_TYPE_AFTER = 'After';
-	public static final String ANCHOR_TYPE_END = 'End';
+	public static final String ANCHOR_TYPE_START = 'Anchor_Type_Start';
+	public static final String ANCHOR_TYPE_BEFORE = 'Anchor_Type_Before';
+	public static final String ANCHOR_TYPE_AFTER = 'Anchor_Type_After';
+	public static final String ANCHOR_TYPE_END = 'Anchor_Type_End';
 
 	public PageLayoutService.Response updateLayout(PageLayoutService.Request request)
 	{
