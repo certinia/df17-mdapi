@@ -1,0 +1,30 @@
+<aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes">
+
+	<aura:attribute name="strategy" type="string" default="Native" />
+	<aura:attribute name="objectType" type="string" default="Account" />
+	<aura:attribute name="layoutName" type="string" default="Account-Account Layout" />
+	<aura:attribute name="operation" type="string" default="Add" />
+	<aura:attribute name="behavior" type="string" default="Editable" />
+	<aura:attribute name="field" type="string" default="OwnerId" />
+	<aura:attribute name="anchorType" type="string" default="Start" />
+	<aura:attribute name="anchorField" type="string" default="" />
+	<aura:attribute name="response" type="string" default="" />
+
+	<lightning:card >
+		<aura:set attribute="actions">
+			<lightning:button variant="brand" label="Update" onclick="{!c.onUpdateClicked}" />
+		</aura:set>
+		<ui:inputText label="Strategy" value="{!v.strategy}" />
+		<ui:inputText label="ObjectType" value="{!v.objectType}" />
+		<ui:inputText label="LayoutName" value="{!v.layoutName}" />
+		<ui:inputText label="Operation" value="{!v.operation}" />
+		<ui:inputText label="Behavior" value="{!v.behavior}" />
+		<ui:inputText label="Field" value="{!v.field}" />
+		<ui:inputText label="AnchorType" value="{!v.anchorType}" />
+		<ui:inputText label="AnchorField" value="{!v.anchorField}" />
+		<aura:set attribute="footer">
+			<ui:outputText value="{!v.response}" />
+		</aura:set>
+	</lightning:card>
+
+</aura:component>
