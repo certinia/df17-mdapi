@@ -47,7 +47,7 @@
         <language>en_US</language>
         <protected>true</protected>
         <shortDescription>Behaviour Readonly</shortDescription>
-        <value>Readonly</value>
+        <value>Read Only</value>
     </labels>
 	<labels>
 		<fullName>ButtonTextUpdate</fullName>

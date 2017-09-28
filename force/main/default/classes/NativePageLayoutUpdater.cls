@@ -12,7 +12,6 @@ public class NativePageLayoutUpdater
 		try
 		{
 			this.request = request;
-			validate();
 			
 			readLayout();
 			modifyLayout();
@@ -27,19 +26,6 @@ public class NativePageLayoutUpdater
 			return new PageLayoutService.Response()
 				.withSuccess(false)
 				.withMessage(e.getMessage());
-		}
-	}
-
-	private void validate()
-	{
-		if (this.request.Operation != PageLayoutService.OPERATION_ADD)
-		{
-			throw new PageLayoutService.PageLayoutException('Unsupported Operation: ' + this.request.Operation);
-		}
-		
-		if (this.request.AnchorType != PageLayoutService.ANCHOR_TYPE_START)
-		{
-			throw new PageLayoutService.PageLayoutException('Unsupported AnchorType: ' + this.request.AnchorType);
 		}
 	}
 
@@ -60,47 +46,91 @@ public class NativePageLayoutUpdater
 
 	private void modifyLayout()
 	{
-		Metadata.LayoutItem existingField = findFieldFromLayout();
-		if (existingField != null)
+		Integer sizeSections = this.layout.layoutSections.size();
+			
+		if (this.request.Operation == PageLayoutService.OPERATION_ADD)
 		{
-			throw new PageLayoutService.PageLayoutException('Field ' + this.request.Field + 'already present in layout ' + this.request.LayoutName);
-		}
-
-		Metadata.LayoutColumn firstColumn = findFirstColumn();
-		if (firstColumn.layoutItems == null)
-		{
-			firstColumn.layoutItems = new Metadata.LayoutItem[]{};
-		}
-
-		firstColumn.layoutItems.add(0, this.request.asField());
-	}
-
-	private Metadata.LayoutItem findFieldFromLayout()
-	{
-		for (Metadata.LayoutSection layoutSection : this.layout.layoutSections)
-		{
-			for (Metadata.LayoutColumn layoutColumn : layoutSection.layoutColumns)
+			Metadata.LayoutItem newItem = this.request.asField();
+			
+			for (Integer idxSection=0; idxSection<sizeSections; idxSection++)
 			{
-				if (layoutColumn.layoutItems != null)
+				Metadata.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
+				Integer sizeColumns = layoutSection.layoutColumns.size();
+				for (Integer idxColumn=0; idxColumn < sizeColumns; idxColumn++)
 				{
-					for (Metadata.LayoutItem layoutItem : layoutColumn.layoutItems)
+					Metadata.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
+					Integer sizeItems = layoutColumn.layoutItems.size();
+					
+					if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_START && idxSection == 0 && idxColumn == 0)
 					{
-						if (layoutItem.field == this.request.Field)
+						if (sizeItems == 0)
 						{
-							return layoutItem;
+							layoutColumn.layoutItems.add(newItem);
+							return;
+						}
+						else
+						{
+							layoutColumn.layoutItems.add(0, newItem);
+							return;
+						}
+					}
+					else if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_END && idxSection == sizeSections-1 && idxColumn == sizeItems-1)
+					{
+						layoutColumn.layoutItems.add(newItem);
+						return;
+					}
+					
+					
+					for (Integer idxItem=0; idxItem < sizeItems; idxItem++)
+					{
+						Metadata.LayoutItem anchorItem = layoutColumn.layoutItems[idxItem];
+						if (anchorItem.field == this.request.AnchorField)
+						{
+							if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_BEFORE)
+							{
+								layoutColumn.layoutItems.add(idxItem, newItem);
+								return;
+							}
+							else if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_AFTER)
+							{
+								if (idxItem == sizeItems-1)
+								{
+									layoutColumn.layoutItems.add(newItem);
+									return;
+								}
+								else
+								{
+									layoutColumn.layoutItems.add(idxItem+1, newItem);
+									return;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-
-		return null;
-	}
-
-	private Metadata.LayoutColumn findFirstColumn()
-	{
-		Metadata.LayoutSection firstSection = this.layout.layoutSections[0];
-		return firstSection.layoutColumns[0];
+		else if (this.request.Operation == PageLayoutService.OPERATION_REMOVE)
+		{
+			for (Integer idxSection=0; idxSection<sizeSections; idxSection++)
+			{
+				Metadata.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
+				Integer sizeColumns = layoutSection.layoutColumns.size();
+				for (Integer idxColumn=0; idxColumn < sizeColumns; idxColumn++)
+				{
+					Metadata.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
+					Integer sizeItems = layoutColumn.layoutItems.size();
+					for (Integer idxItem=0; idxItem < sizeItems; idxItem++)
+					{
+						Metadata.LayoutItem layoutItem = layoutColumn.layoutItems[idxItem];
+						if (layoutItem.field == this.request.Field)
+						{
+							layoutColumn.layoutItems.remove(idxItem);
+							return;
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private Id saveLayout()
