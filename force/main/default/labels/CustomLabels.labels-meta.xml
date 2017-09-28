@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Anchor_Type_After</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Anchor Type After</shortDescription>
+        <value>After</value>
+    </labels>
+    <labels>
+        <fullName>Anchor_Type_Before</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Anchor Type Before</shortDescription>
+        <value>Before</value>
+    </labels>
+    <labels>
+        <fullName>Anchor_Type_End</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Anchor Type End</shortDescription>
+        <value>End</value>
+    </labels>
+    <labels>
+        <fullName>Anchor_Type_Start</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Anchor Type Start</shortDescription>
+        <value>Start</value>
+    </labels>
+	<labels>
+        <fullName>Behaviour_Edit</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Behaviour Edit</shortDescription>
+        <value>Edit</value>
+    </labels>
+	<labels>
+        <fullName>Behaviour_Required</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Behaviour Required</shortDescription>
+        <value>Required</value>
+    </labels>
+	<labels>
+        <fullName>Behaviour_Readonly</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Behaviour Readonly</shortDescription>
+        <value>Readonly</value>
+    </labels>
+	<labels>
+		<fullName>ButtonTextUpdate</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Button Text Update</shortDescription>
+		<value>Update</value>
+	</labels>
+	<labels>
+		<fullName>FieldStrategy</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Strategy</shortDescription>
+		<value>Strategy</value>
+	</labels>
+	<labels>
+		<fullName>FieldObjectType</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Object Type</shortDescription>
+		<value>Object Type</value>
+	</labels>
+	<labels>
+		<fullName>FieldLayoutName</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Layout Name</shortDescription>
+		<value>Layout Name</value>
+	</labels>
+	<labels>
+		<fullName>FieldOperation</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Operation</shortDescription>
+		<value>Operation</value>
+	</labels>
+	<labels>
+		<fullName>FieldBehavior</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Behavior</shortDescription>
+		<value>Behavior</value>
+	</labels>
+	<labels>
+		<fullName>FieldField</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Field</shortDescription>
+		<value>Field</value>
+	</labels>
+	<labels>
+		<fullName>FieldAnchorType</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Anchor Type</shortDescription>
+		<value>Anchor Type</value>
+	</labels>
+	<labels>
+		<fullName>FieldAnchorField</fullName>
+		<language>en_US</language>
+		<protected>true</protected>
+		<shortDescription>Field Anchor Field</shortDescription>
+		<value>Anchor Field</value>
+	</labels>
+    <labels>
+        <fullName>Operation_Add</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Operation Add</shortDescription>
+        <value>Add</value>
+    </labels>
+    <labels>
+        <fullName>Operation_Remove</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Operation Remove</shortDescription>
+        <value>Remove</value>
+    </labels>
+    <labels>
+        <fullName>Strategy_Classic</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Strategy Classic</shortDescription>
+        <value>Classic</value>
+    </labels>
+    <labels>
+        <fullName>Strategy_Native</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>Strategy Native</shortDescription>
+        <value>Native</value>
+    </labels>
+</CustomLabels>
