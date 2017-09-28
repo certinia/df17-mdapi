@@ -16,11 +16,11 @@
 		action.setCallback(this, function (response) {
 			var state = response.getState();
 			if (state === "SUCCESS") {
-				cmp.set("v.response", response.getReturnValue());
+				component.set("v.response", response.getReturnValue());
 			} else if (state === "ERROR") {
-				cmp.set("v.response", "Error");
+				component.set("v.response", "Error");
 			} else {
-				cmp.set("v.response", "Unknown state: " + state);
+				component.set("v.response", "Unknown state: " + state);
 			}
 		});
 
