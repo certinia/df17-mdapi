@@ -10,7 +10,7 @@
 	<aura:attribute name="anchorField" type="string" default="" />
 	<aura:attribute name="response" type="string" default="" />
 
-	<lightning:card>
+	<lightning:card >
 		<aura:set attribute="actions">
 			<lightning:button variant="brand" label="Update" onclick="{!c.onUpdateClicked}" />
 		</aura:set>
