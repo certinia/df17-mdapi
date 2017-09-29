@@ -9,6 +9,10 @@ public class PageLayoutService
 	public static final String OPERATION_ADD = 'Operation_Add';
 	public static final String OPERATION_REMOVE = 'Operation_Remove';
 	
+	public static final String BEHAVIOUR_EDIT = 'Behaviour_Edit';
+	public static final String BEHAVIOUR_REQUIRED = 'Behaviour_Required';
+	public static final String BEHAVIOUR_READONLY = 'Behaviour_Readonly';
+	
 	public static final String ANCHOR_TYPE_START = 'Anchor_Type_Start';
 	public static final String ANCHOR_TYPE_BEFORE = 'Anchor_Type_Before';
 	public static final String ANCHOR_TYPE_AFTER = 'Anchor_Type_After';
@@ -55,13 +59,18 @@ public class PageLayoutService
 		{
 			Metadata.LayoutItem result = new Metadata.LayoutItem();
 			result.field = this.Field;
-			for (Metadata.UiBehavior uiBehavior : Metadata.UiBehavior.values())
+			
+			if (this.Behavior == BEHAVIOUR_EDIT)
 			{
-				if (uiBehavior.name() == this.Behavior)
-				{
-					result.behavior = uiBehavior;
-					break;
-				}
+				result.Behavior = Metadata.UiBehavior.EDIT;
+			}
+			else if (this.Behavior == BEHAVIOUR_REQUIRED)
+			{
+				result.Behavior = Metadata.UiBehavior.REQUIRED;
+			}
+			else if (this.Behavior == BEHAVIOUR_READONLY)
+			{
+				result.Behavior = Metadata.UiBehavior.READONLY;
 			}
 			
 			return result;
