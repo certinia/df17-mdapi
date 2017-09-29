@@ -9,7 +9,8 @@
 	<aura:attribute name="field" type="string" default="OwnerId" />
 	<aura:attribute name="anchorType" type="string" default="Start" />
 	<aura:attribute name="anchorField" type="string" default="" />
-	<aura:attribute name="response" type="string" default="" />
+	<aura:attribute name="message" type="string" default="" />
+	<aura:attribute name="messageSeverity" type="string" default="Info" />
 
 	<lightning:card>
 
@@ -17,6 +18,13 @@
 		<aura:set attribute="actions">
 			<lightning:button variant="brand" label="{!$Label.c.ButtonTextUpdate}" onclick="{!c.onUpdateClicked}" />
 		</aura:set>
+
+		<!-- Messages -->
+		<aura:if isTrue="{!v.message}">
+			<ui:message title="Confirmation" severity="{!v.messageSeverity}" closable="false">
+				{!v.message}
+			</ui:message>
+		</aura:if>
 
 		<!-- Strategy -->
 		<ui:inputSelect label="{!$Label.c.FieldStrategy}" value="{!v.strategy}">
@@ -57,10 +65,6 @@
 		<!-- Anchor Field -->
 		<ui:inputText label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" />
 
-		<!-- Footer -->
-		<aura:set attribute="footer">
-			<ui:outputText value="{!v.response}" />
-		</aura:set>
 	</lightning:card>
 
 </aura:component>
