@@ -50,64 +50,48 @@ public class NativePageLayoutUpdater
 			
 		if (this.request.Operation == PageLayoutService.OPERATION_ADD)
 		{
-			Metadata.LayoutItem newItem = this.request.asField();
-			
 			for (Integer idxSection=0; idxSection<sizeSections; idxSection++)
 			{
 				Metadata.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
-				Integer sizeColumns = layoutSection.layoutColumns.size();
-				for (Integer idxColumn=0; idxColumn < sizeColumns; idxColumn++)
+				Integer sizeColumns = layoutSection.layoutColumns == null ? 0 : layoutSection.layoutColumns.size();
+				for (Integer idxColumn=0; idxColumn<sizeColumns; idxColumn++)
 				{
 					Metadata.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
-					Integer sizeItems = layoutColumn.layoutItems.size();
+					Integer sizeItems = layoutColumn.layoutItems == null ? 0 : layoutColumn.layoutItems.size();
 					
 					if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_START && idxSection == 0 && idxColumn == 0)
 					{
-						if (sizeItems == 0)
-						{
-							layoutColumn.layoutItems.add(newItem);
-							return;
-						}
-						else
-						{
-							layoutColumn.layoutItems.add(0, newItem);
-							return;
-						}
+						addAt(0, layoutColumn);
+						return;
 					}
-					else if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_END && idxSection == sizeSections-1 && idxColumn == sizeItems-1)
+					else if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_END && idxSection >= sizeSections-1 && idxColumn >= sizeColumns-1)
 					{
-						layoutColumn.layoutItems.add(newItem);
+						addAt(sizeColumns-1, layoutColumn);
 						return;
 					}
 					
-					
-					for (Integer idxItem=0; idxItem < sizeItems; idxItem++)
+					for (Integer idxItem=0; idxItem<sizeItems; idxItem++)
 					{
 						Metadata.LayoutItem anchorItem = layoutColumn.layoutItems[idxItem];
 						if (anchorItem.field == this.request.AnchorField)
 						{
 							if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_BEFORE)
 							{
-								layoutColumn.layoutItems.add(idxItem, newItem);
+								addAt(idxItem, layoutColumn);
 								return;
 							}
 							else if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_AFTER)
 							{
-								if (idxItem == sizeItems-1)
-								{
-									layoutColumn.layoutItems.add(newItem);
-									return;
-								}
-								else
-								{
-									layoutColumn.layoutItems.add(idxItem+1, newItem);
-									return;
-								}
+								addAt(idxItem + 1, layoutColumn);
+								return;
 							}
 						}
 					}
 				}
 			}
+
+			// If we get this far, we couldn't find anywhere to add the field
+			throw new PageLayoutService.PageLayoutException('Could not anchor ' + this.request.AnchorType + ' ' + this.request.AnchorField + ' in the layout ' + this.request.LayoutName);
 		}
 		else if (this.request.Operation == PageLayoutService.OPERATION_REMOVE)
 		{
@@ -118,7 +102,7 @@ public class NativePageLayoutUpdater
 				for (Integer idxColumn=0; idxColumn < sizeColumns; idxColumn++)
 				{
 					Metadata.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
-					Integer sizeItems = layoutColumn.layoutItems.size();
+					Integer sizeItems = layoutColumn.layoutItems == null ? 0 : layoutColumn.layoutItems.size();
 					for (Integer idxItem=0; idxItem < sizeItems; idxItem++)
 					{
 						Metadata.LayoutItem layoutItem = layoutColumn.layoutItems[idxItem];
@@ -130,7 +114,28 @@ public class NativePageLayoutUpdater
 					}
 				}
 			}
+
+			// If we get this far, we couldn't find the field to remove
+			throw new PageLayoutService.PageLayoutException('Unable to remove field  ' + this.request.Field + ' because it was not in the layout ' + this.request.LayoutName);
 		}
+	}
+
+	private void addAt(Integer idx, Metadata.LayoutColumn column)
+	{
+		Metadata.LayoutItem item = this.request.asField();
+
+		if (column.layoutItems == null) {
+			column.layoutItems = new Metadata.LayoutItem[]{ item };
+			return;
+		}
+
+		if (idx >= column.layoutItems.size())
+		{
+			column.layoutItems.add(item);
+			return;
+		}
+
+		column.layoutItems.add(idx, item);
 	}
 
 	private Id saveLayout()
