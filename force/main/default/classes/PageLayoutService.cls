@@ -39,13 +39,9 @@ public class PageLayoutService
 	{
 		DisplayOption[] result = new DisplayOption[]{};
 		
-		Map<String, Schema.SObjectType> describeMap = Schema.getGlobalDescribe();
-		String[] orderedNames = new List<String>(Schema.getGlobalDescribe().keySet());
-		orderedNames.sort();
-
-		for (String name : orderedNames)
+		for (Schema.SObjectType objectType : Schema.getGlobalDescribe().values())
 		{
-			DescribeSObjectResult describe = describeMap.get(name).getDescribe();
+			DescribeSObjectResult describe = objectType.getDescribe();
 			String developerName = describe.getName();
 			String label = describe.getLabel();
 			String displayName = String.format('{0} ({1})', new String[]{
@@ -58,6 +54,7 @@ public class PageLayoutService
 				.withLabel(displayName));
 		}
 
+		result.sort();
 		return result;
 	}
 	
@@ -69,14 +66,9 @@ public class PageLayoutService
 		if (sObjectType != null)
 		{
 			DescribeSObjectResult describe = sObjectType.getDescribe();
-			Map<String, SObjectField> fieldDescribes = describe.fields.getMap();
-			
-			String[] orderedNames = new List<String>(fieldDescribes.keySet());
-			orderedNames.sort();
-
-			for (String name : orderedNames)
+			for (Schema.SObjectField field : describe.fields.getMap().values())
 			{
-				Schema.DescribeFieldResult dfr = fieldDescribes.get(name).getDescribe();
+				Schema.DescribeFieldResult dfr = field.getDescribe();
 				String developerName = dfr.getName();
 				String label = dfr.getLabel();
 				String displayName = String.format('{0} ({1})', new String[]{
@@ -90,6 +82,7 @@ public class PageLayoutService
 			}
 		}
 
+		result.sort();
 		return result;
 	}
 
@@ -144,13 +137,26 @@ public class PageLayoutService
 		public PageLayoutService.Response withMessage(String value) { this.Message = value; return this; }
 	}
 
-	public class DisplayOption
+	public class DisplayOption implements Comparable
 	{
 		@AuraEnabled public String value {get; set;}
 		@AuraEnabled public String label {get; set;}
 
 		public DisplayOption withValue(String value) { this.Value = value; return this; }
 		public DisplayOption withLabel(String value) { this.Label = value; return this; }
+
+		public Integer compareTo(Object o)
+		{
+			if (o instanceof PageLayoutService.DisplayOption)
+			{
+				PageLayoutService.DisplayOption that = (PageLayoutService.DisplayOption)o;
+
+				String thisLabel = this.label == null ? '' : this.label;
+				return thisLabel.compareTo(that.label);
+			}
+
+			return 0;
+		}
 	}
 
 	public class PageLayoutException extends Exception {}
