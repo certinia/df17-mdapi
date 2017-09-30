@@ -48,6 +48,13 @@
 		<!-- Layout Name -->
 		<ui:inputText label="{!$Label.c.FieldLayoutName}" value="{!v.layoutName}" />
 
+		<!-- Field -->
+		<lightning:select label="{!$Label.c.FieldField}" value="{!v.field}" >
+			<aura:iteration items="{!v.fields}" var="f">
+				<option value="{!f.value}" label="{!f.label}" />
+			</aura:iteration>
+		</lightning:select>
+
 		<!-- Operation -->
 		<lightning:select label="{!$Label.c.FieldOperation}" value="{!v.operation}">
 			<option value="Operation_Add" label="{!$Label.c.Operation_Add}" />
@@ -59,13 +66,6 @@
 			<option value="Behaviour_Edit" label="{!$Label.c.Behaviour_Edit}" />
 			<option value="Behaviour_Required" label="{!$Label.c.Behaviour_Required}" />
 			<option value="Behaviour_Readonly" label="{!$Label.c.Behaviour_Readonly}" />
-		</lightning:select>
-
-		<!-- Field -->
-		<lightning:select label="{!$Label.c.FieldField}" value="{!v.field}" >
-			<aura:iteration items="{!v.fields}" var="f">
-				<option value="{!f.value}" label="{!f.label}" />
-			</aura:iteration>
 		</lightning:select>
 
 		<!-- Anchor Type -->
