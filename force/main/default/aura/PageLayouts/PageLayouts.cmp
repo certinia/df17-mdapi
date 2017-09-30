@@ -1,18 +1,19 @@
 <aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes">
 
 	<!-- Attributes -->
-	<aura:attribute name="strategy" type="string" default="Native" />
-	<aura:attribute name="objectTypes" type="List" default="Account" />
-	<aura:attribute name="objectType" type="string" default="Account" />
-	<aura:attribute name="layoutName" type="string" default="Account-Account Layout" />
-	<aura:attribute name="operation" type="string" default="Add" />
-	<aura:attribute name="behavior" type="string" default="Editable" />
-	<aura:attribute name="fields" type="List" default="" />
-	<aura:attribute name="field" type="string" default="" />
-	<aura:attribute name="anchorType" type="string" default="Start" />
-	<aura:attribute name="anchorField" type="string" default="" />
-	<aura:attribute name="message" type="string" default="" />
-	<aura:attribute name="messageSeverity" type="string" default="Info" />
+	<aura:attribute name="objectTypes" type="List" />
+	<aura:attribute name="fields" type="List" />
+	
+	<aura:attribute name="strategy" type="string" />
+	<aura:attribute name="objectType" type="string" />
+	<aura:attribute name="layoutName" type="string" />
+	<aura:attribute name="operation" type="string" />
+	<aura:attribute name="behavior" type="string" />
+	<aura:attribute name="field" type="string" />
+	<aura:attribute name="anchorType" type="string" />
+	<aura:attribute name="anchorField" type="string" />
+	<aura:attribute name="message" type="string" />
+	<aura:attribute name="messageSeverity" type="string" />
 
 	<!-- Handlers -->
 	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
