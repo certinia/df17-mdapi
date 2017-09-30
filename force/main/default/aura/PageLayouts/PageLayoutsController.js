@@ -5,5 +5,9 @@
 
 	onInit: function (component, event, helper) {
 		helper.getObjectTypes(component);
+	},
+
+	onObjectTypeChanged: function (component, event, helper) {
+		helper.getFields(component);
 	}
 })

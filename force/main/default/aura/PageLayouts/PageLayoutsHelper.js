@@ -60,8 +60,31 @@
 		var action = component.get('c.getObjectTypes');
 
 		action.setCallback(this, function (response) {
-			var objectTypes = response.getReturnValue();
-			component.set('{!v.objectTypes}', objectTypes);
+			var objectTypes = response.getReturnValue(),
+				first = objectTypes && objectTypes[0] && objectTypes[0].value ? objectTypes[0].value : null;
+
+			component.set('v.objectTypes', objectTypes);
+			component.set('v.objectType', first);
+		});
+
+		$A.enqueueAction(action);
+	},
+
+	getFields: function (component) {
+		var action = component.get('c.getFields'),
+			objectType = component.get('v.objectType');
+
+		action.setParams({
+			objectType: objectType
+		});
+
+		action.setCallback(this, function (response) {
+			var fields = response.getReturnValue(),
+				first = fields && fields[0] && fields[0].value ? fields[0].value : null;
+
+			component.set('v.fields', fields);
+			component.set('v.field', first);
+			component.set('v.anchorField', first);
 		});
 
 		$A.enqueueAction(action);

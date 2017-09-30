@@ -54,7 +54,7 @@ public class PageLayoutService
 			});
 
 			result.add(new PageLayoutService.DisplayOption()
-				.withText(developerName)
+				.withValue(developerName)
 				.withLabel(displayName));
 		}
 
@@ -85,7 +85,7 @@ public class PageLayoutService
 				});
 
 				result.add(new PageLayoutService.DisplayOption()
-					.withText(developerName)
+					.withValue(developerName)
 					.withLabel(displayName));
 			}
 		}
@@ -146,10 +146,10 @@ public class PageLayoutService
 
 	public class DisplayOption
 	{
-		@AuraEnabled public String text {get; set;}
+		@AuraEnabled public String value {get; set;}
 		@AuraEnabled public String label {get; set;}
 
-		public DisplayOption withText(String value) { this.Text = value; return this; }
+		public DisplayOption withValue(String value) { this.Value = value; return this; }
 		public DisplayOption withLabel(String value) { this.Label = value; return this; }
 	}
 
