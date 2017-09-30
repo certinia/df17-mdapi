@@ -88,5 +88,12 @@
 		});
 
 		$A.enqueueAction(action);
+	},
+
+	updateLayoutName: function (component) {
+		var objectType = component.get('v.objectType'),
+			layoutName = objectType + '-' + objectType + ' Layout';
+
+		component.set('v.layoutName', layoutName);
 	}
 })

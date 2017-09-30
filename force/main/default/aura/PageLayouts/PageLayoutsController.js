@@ -9,5 +9,6 @@
 
 	onObjectTypeChanged: function (component, event, helper) {
 		helper.getFields(component);
+		helper.updateLayoutName(component);
 	}
 })
