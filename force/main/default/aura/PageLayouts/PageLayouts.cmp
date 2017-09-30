@@ -1,16 +1,23 @@
 <aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes">
 
 	<!-- Attributes -->
-	<aura:attribute name="strategy" type="string" default="Native" />
-	<aura:attribute name="objectType" type="string" default="Account" />
-	<aura:attribute name="layoutName" type="string" default="Account-Account Layout" />
-	<aura:attribute name="operation" type="string" default="Add" />
-	<aura:attribute name="behavior" type="string" default="Editable" />
-	<aura:attribute name="field" type="string" default="OwnerId" />
-	<aura:attribute name="anchorType" type="string" default="Start" />
-	<aura:attribute name="anchorField" type="string" default="" />
-	<aura:attribute name="message" type="string" default="" />
-	<aura:attribute name="messageSeverity" type="string" default="Info" />
+	<aura:attribute name="objectTypes" type="List" />
+	<aura:attribute name="fields" type="List" />
+	
+	<aura:attribute name="strategy" type="string" />
+	<aura:attribute name="objectType" type="string" />
+	<aura:attribute name="layoutName" type="string" />
+	<aura:attribute name="operation" type="string" />
+	<aura:attribute name="behavior" type="string" />
+	<aura:attribute name="field" type="string" />
+	<aura:attribute name="anchorType" type="string" />
+	<aura:attribute name="anchorField" type="string" />
+	<aura:attribute name="message" type="string" />
+	<aura:attribute name="messageSeverity" type="string" />
+
+	<!-- Handlers -->
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+	<aura:handler name="change" value="{!v.objectType}" action="{!c.onObjectTypeChanged}"/>
 
 	<lightning:card>
 
@@ -27,43 +34,55 @@
 		</aura:if>
 
 		<!-- Strategy -->
-		<ui:inputSelect label="{!$Label.c.FieldStrategy}" value="{!v.strategy}">
-			<ui:inputSelectOption text="Strategy_Classic" label="{!$Label.c.Strategy_Classic}" />
-			<ui:inputSelectOption text="Strategy_Native" label="{!$Label.c.Strategy_Native}" />
-		</ui:inputSelect>
+		<lightning:select label="{!$Label.c.FieldStrategy}" value="{!v.strategy}">
+			<option value="Strategy_Classic" label="{!$Label.c.Strategy_Classic}" />
+			<option value="Strategy_Native" label="{!$Label.c.Strategy_Native}" />
+		</lightning:select>
 
 		<!-- Object Type -->
-		<ui:inputText label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" />
+		<lightning:select label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" >
+			<aura:iteration items="{!v.objectTypes}" var="ot">
+				<option value="{!ot.value}" label="{!ot.label}" />
+			</aura:iteration>
+		</lightning:select>
 
 		<!-- Layout Name -->
 		<ui:inputText label="{!$Label.c.FieldLayoutName}" value="{!v.layoutName}" />
 
+		<!-- Field -->
+		<lightning:select label="{!$Label.c.FieldField}" value="{!v.field}" >
+			<aura:iteration items="{!v.fields}" var="f">
+				<option value="{!f.value}" label="{!f.label}" />
+			</aura:iteration>
+		</lightning:select>
+
 		<!-- Operation -->
-		<ui:inputSelect label="{!$Label.c.FieldOperation}" value="{!v.operation}">
-			<ui:inputSelectOption text="Operation_Add" label="{!$Label.c.Operation_Add}" />
-			<ui:inputSelectOption text="Operation_Remove" label="{!$Label.c.Operation_Remove}" />
-		</ui:inputSelect>
+		<lightning:select label="{!$Label.c.FieldOperation}" value="{!v.operation}">
+			<option value="Operation_Add" label="{!$Label.c.Operation_Add}" />
+			<option value="Operation_Remove" label="{!$Label.c.Operation_Remove}" />
+		</lightning:select>
 
 		<!-- Behavior -->
-		<ui:inputSelect label="{!$Label.c.FieldBehavior}" value="{!v.behavior}">
-			<ui:inputSelectOption text="Behaviour_Edit" label="{!$Label.c.Behaviour_Edit}" />
-			<ui:inputSelectOption text="Behaviour_Required" label="{!$Label.c.Behaviour_Required}" />
-			<ui:inputSelectOption text="Behaviour_Readonly" label="{!$Label.c.Behaviour_Readonly}" />
-		</ui:inputSelect>
-
-		<!-- Field -->
-		<ui:inputText label="{!$Label.c.FieldField}" value="{!v.field}" />
+		<lightning:select label="{!$Label.c.FieldBehavior}" value="{!v.behavior}">
+			<option value="Behaviour_Edit" label="{!$Label.c.Behaviour_Edit}" />
+			<option value="Behaviour_Required" label="{!$Label.c.Behaviour_Required}" />
+			<option value="Behaviour_Readonly" label="{!$Label.c.Behaviour_Readonly}" />
+		</lightning:select>
 
 		<!-- Anchor Type -->
-		<ui:inputSelect label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}">
-			<ui:inputSelectOption text="Anchor_Type_After" label="{!$Label.c.Anchor_Type_After}" />
-			<ui:inputSelectOption text="Anchor_Type_Before" label="{!$Label.c.Anchor_Type_Before}" />
-			<ui:inputSelectOption text="Anchor_Type_End" label="{!$Label.c.Anchor_Type_End}" />
-			<ui:inputSelectOption text="Anchor_Type_Start" label="{!$Label.c.Anchor_Type_Start}" />
-		</ui:inputSelect>
+		<lightning:select label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}">
+			<option value="Anchor_Type_After" label="{!$Label.c.Anchor_Type_After}" />
+			<option value="Anchor_Type_Before" label="{!$Label.c.Anchor_Type_Before}" />
+			<option value="Anchor_Type_End" label="{!$Label.c.Anchor_Type_End}" />
+			<option value="Anchor_Type_Start" label="{!$Label.c.Anchor_Type_Start}" />
+		</lightning:select>
 
 		<!-- Anchor Field -->
-		<ui:inputText label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" />
+		<lightning:select label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" >
+			<aura:iteration items="{!v.fields}" var="f">
+				<option value="{!f.value}" label="{!f.label}" />
+			</aura:iteration>
+		</lightning:select>
 
 	</lightning:card>
 

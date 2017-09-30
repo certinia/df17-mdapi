@@ -29,8 +29,8 @@
 				messageSeverity = 'Info';
 				responseMessages = response.getReturnValue();
 
-				if (responseMessages && responseMessages[0] && responseMessages[0].message) {
-					message = responseMessages[0].message;
+				if (responseMessages && responseMessages.message) {
+					message = responseMessages.message;
 				} else {
 					message = 'Success';
 				}
@@ -54,5 +54,46 @@
 		});
 
 		$A.enqueueAction(action);
+	},
+
+	getObjectTypes: function (component) {
+		var action = component.get('c.getObjectTypes');
+
+		action.setCallback(this, function (response) {
+			var objectTypes = response.getReturnValue(),
+				first = objectTypes && objectTypes[0] && objectTypes[0].value ? objectTypes[0].value : null;
+
+			component.set('v.objectTypes', objectTypes);
+			component.set('v.objectType', first);
+		});
+
+		$A.enqueueAction(action);
+	},
+
+	getFields: function (component) {
+		var action = component.get('c.getFields'),
+			objectType = component.get('v.objectType');
+
+		action.setParams({
+			objectType: objectType
+		});
+
+		action.setCallback(this, function (response) {
+			var fields = response.getReturnValue(),
+				first = fields && fields[0] && fields[0].value ? fields[0].value : null;
+
+			component.set('v.fields', fields);
+			component.set('v.field', first);
+			component.set('v.anchorField', first);
+		});
+
+		$A.enqueueAction(action);
+	},
+
+	updateLayoutName: function (component) {
+		var objectType = component.get('v.objectType'),
+			layoutName = objectType + '-' + objectType + ' Layout';
+
+		component.set('v.layoutName', layoutName);
 	}
 })

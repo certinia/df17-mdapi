@@ -35,16 +35,67 @@ public class PageLayoutService
 			.withMessage('Unknown strategy: ' + request.Strategy);
 	}
 
+	public DisplayOption[] getObjectTypes()
+	{
+		DisplayOption[] result = new DisplayOption[]{};
+		
+		for (Schema.SObjectType objectType : Schema.getGlobalDescribe().values())
+		{
+			DescribeSObjectResult describe = objectType.getDescribe();
+			String developerName = describe.getName();
+			String label = describe.getLabel();
+			String displayName = String.format('{0} ({1})', new String[]{
+				label,
+				developerName
+			});
+
+			result.add(new PageLayoutService.DisplayOption()
+				.withValue(developerName)
+				.withLabel(displayName));
+		}
+
+		result.sort();
+		return result;
+	}
+	
+	public DisplayOption[] getFields(String objectType)
+	{
+		DisplayOption[] result = new DisplayOption[]{};
+		
+		Schema.SObjectType sObjectType = Schema.getGlobalDescribe().get(objectType);
+		if (sObjectType != null)
+		{
+			DescribeSObjectResult describe = sObjectType.getDescribe();
+			for (Schema.SObjectField field : describe.fields.getMap().values())
+			{
+				Schema.DescribeFieldResult dfr = field.getDescribe();
+				String developerName = dfr.getName();
+				String label = dfr.getLabel();
+				String displayName = String.format('{0} ({1})', new String[]{
+					label,
+					developerName
+				});
+
+				result.add(new PageLayoutService.DisplayOption()
+					.withValue(developerName)
+					.withLabel(displayName));
+			}
+		}
+
+		result.sort();
+		return result;
+	}
+
 	public class Request
 	{
-		public String Strategy {get; set;}
-		public String ObjectType {get; set;}
-		public String LayoutName {get; set;}
-		public String Operation {get; set;}
-		public String Behavior {get; set;}
-		public String Field {get; set;}
-		public String AnchorType {get; set;}
-		public String AnchorField {get; set;}
+		@AuraEnabled public String Strategy {get; set;}
+		@AuraEnabled public String ObjectType {get; set;}
+		@AuraEnabled public String LayoutName {get; set;}
+		@AuraEnabled public String Operation {get; set;}
+		@AuraEnabled public String Behavior {get; set;}
+		@AuraEnabled public String Field {get; set;}
+		@AuraEnabled public String AnchorType {get; set;}
+		@AuraEnabled public String AnchorField {get; set;}
 
 		public PageLayoutService.Request withStrategy(String value) { this.Strategy = value; return this; }
 		public PageLayoutService.Request withObjectType(String value) { this.ObjectType = value; return this; }
@@ -79,11 +130,33 @@ public class PageLayoutService
 
 	public class Response
 	{
-		public Boolean Success {get; set;}
-		public String Message {get; set;}
+		@AuraEnabled public Boolean Success {get; set;}
+		@AuraEnabled public String Message {get; set;}
 
 		public PageLayoutService.Response withSuccess(Boolean value) { this.Success = value; return this; }
 		public PageLayoutService.Response withMessage(String value) { this.Message = value; return this; }
+	}
+
+	public class DisplayOption implements Comparable
+	{
+		@AuraEnabled public String value {get; set;}
+		@AuraEnabled public String label {get; set;}
+
+		public DisplayOption withValue(String value) { this.Value = value; return this; }
+		public DisplayOption withLabel(String value) { this.Label = value; return this; }
+
+		public Integer compareTo(Object o)
+		{
+			if (o instanceof PageLayoutService.DisplayOption)
+			{
+				PageLayoutService.DisplayOption that = (PageLayoutService.DisplayOption)o;
+
+				String thisLabel = this.label == null ? '' : this.label;
+				return thisLabel.compareTo(that.label);
+			}
+
+			return 0;
+		}
 	}
 
 	public class PageLayoutException extends Exception {}
