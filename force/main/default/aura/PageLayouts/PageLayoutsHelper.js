@@ -29,8 +29,8 @@
 				messageSeverity = 'Info';
 				responseMessages = response.getReturnValue();
 
-				if (responseMessages && responseMessages[0] && responseMessages[0].message) {
-					message = responseMessages[0].message;
+				if (responseMessages && responseMessages.message) {
+					message = responseMessages.message;
 				} else {
 					message = 'Success';
 				}
@@ -51,6 +51,17 @@
 
 			component.set('v.message', message);
 			component.set('v.messageSeverity', messageSeverity);
+		});
+
+		$A.enqueueAction(action);
+	},
+
+	getObjectTypes: function (component) {
+		var action = component.get('c.getObjectTypes');
+
+		action.setCallback(this, function (response) {
+			var objectTypes = response.getReturnValue();
+			component.set('{!v.objectTypes}', objectTypes);
 		});
 
 		$A.enqueueAction(action);

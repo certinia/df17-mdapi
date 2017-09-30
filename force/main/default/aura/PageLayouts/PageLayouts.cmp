@@ -1,7 +1,10 @@
 <aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes">
 
+	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
 	<!-- Attributes -->
 	<aura:attribute name="strategy" type="string" default="Native" />
+	<aura:attribute name="objectTypes" type="List" default="Account" />
 	<aura:attribute name="objectType" type="string" default="Account" />
 	<aura:attribute name="layoutName" type="string" default="Account-Account Layout" />
 	<aura:attribute name="operation" type="string" default="Add" />
@@ -33,7 +36,7 @@
 		</ui:inputSelect>
 
 		<!-- Object Type -->
-		<ui:inputText label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" />
+		<ui:inputSelect label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" options="{!v.objectTypes}" />
 
 		<!-- Layout Name -->
 		<ui:inputText label="{!$Label.c.FieldLayoutName}" value="{!v.layoutName}" />
