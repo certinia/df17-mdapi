@@ -10,7 +10,7 @@
             <componentInstanceProperties>
                 <name>height</name>
                 <type>decorator</type>
-                <value>480</value>
+                <value>360</value>
             </componentInstanceProperties>
             <componentInstanceProperties>
                 <name>icon</name>
@@ -30,7 +30,7 @@
             <componentInstanceProperties>
                 <name>width</name>
                 <type>decorator</type>
-                <value>340</value>
+                <value>480</value>
             </componentInstanceProperties>
             <componentName>PageLayouts</componentName>
         </componentInstances>
