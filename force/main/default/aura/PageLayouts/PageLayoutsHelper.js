@@ -12,45 +12,44 @@
 				AnchorField: component.get('v.anchorField')
 			};
 
-		component.set('v.message', '');
-		component.set('v.messageSeverity', '');
-
 		action.setParams({
 			requestString: JSON.stringify(layoutRequest)
 		});
 
 		action.setCallback(this, function (response) {
 			var state = response.getState(),
-				messageSeverity = 'Info',
+				toast = $A.get("e.force:showToast"),
+				success = false,
+				result,
 				message,
-				responseMessages;
+				type;
 
 			if (state === 'SUCCESS') {
-				messageSeverity = 'Info';
-				responseMessages = response.getReturnValue();
-
-				if (responseMessages && responseMessages.message) {
-					message = responseMessages.message;
-				} else {
-					message = 'Success';
-				}
+				result = response.getReturnValue() || {};
+				success = result.Success;
+				message = result.Message;
 			} else if (state === 'ERROR') {
-				messageSeverity = 'Error';
-				responseMessages = response.getError();
-
-				if (responseMessages && responseMessages[0] && responseMessages[0].message) {
-					message = responseMessages[0].message;
-				} else {
-					message = 'Unknown error';
+				result = response.getError();
+				if (result && result[0] && result[0].message) {
+					message = result[0].message;
 				}
-
 			} else {
-				messageSeverity = 'Error';
-				component.set('v.response', 'Unknown state: ' + state);
+				message = 'Unknown state: ' + state;
 			}
 
-			component.set('v.message', message);
-			component.set('v.messageSeverity', messageSeverity);
+			if (success) {
+				message = message || 'Success';
+				type = 'success';
+			} else {
+				message = message || 'Error';
+				type = 'error';
+			}
+
+			toast.setParams({
+				message: message,
+				type: type
+			});
+			toast.fire();
 		});
 
 		$A.enqueueAction(action);

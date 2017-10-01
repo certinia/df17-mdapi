@@ -9,24 +9,15 @@ public class NativePageLayoutUpdater
 
 	public PageLayoutService.Response updateLayout(PageLayoutService.Request request)
 	{
-		try
-		{
-			this.request = request;
-			
-			readLayout();
-			modifyLayout();
-			Id deploymentId = saveLayout();
-			
-			return new PageLayoutService.Response()
-				.withSuccess(true)
-				.withMessage('Enqueued deployment ' + deploymentId + ' - ' + DateTime.now().format());
-		}
-		catch (PageLayoutService.PageLayoutException e)
-		{
-			return new PageLayoutService.Response()
-				.withSuccess(false)
-				.withMessage(e.getMessage());
-		}
+		this.request = request;
+		
+		readLayout();
+		modifyLayout();
+		Id deploymentId = saveLayout();
+		
+		return new PageLayoutService.Response()
+			.withSuccess(true)
+			.withMessage('Enqueued deployment ' + deploymentId);
 	}
 
 	private void readLayout()
