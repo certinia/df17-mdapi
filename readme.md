@@ -14,6 +14,18 @@ This repo accompanies the Dreamforce '17 session **[Build Self-configuring Apps 
 
 The Summer '17 release finally brings native Apex support for the Metadata API! This sample app allows you to compare altering page layouts with both the [native Metadata API](https://releasenotes.docs.salesforce.com/en-us/summer17/release-notes/rn_apex_metadata.htm) and the [FinancialForce Apex Metadata API](https://github.com/financialforcedev/apex-mdapi).
 
+Tips
+---
+* The FinancialForce Apex Metadata API effectively makes a callout from the Salesforce server into your org, on your behalf. It does this by reusing your session.
+	* You will need to add a remote site setting for the current org's subdomain.
+	* You must not enable any security settings that prevent users with a different IP from using your Session Token.
+	
+* Salesforce use persistent caches in Lightning Experience to improve performance, so page layout changes may not be immediately visible even after a hard refresh. You can disable the caching in Setup.
+	* Setup > Security > Session Settings > Caching.
+		* Uncheck Enable secure and persistent browser caching to improve performance
+	![Sample App](docs/readme/disable-cache.png)
+	* There is more discussion in this [StackExchange question](https://salesforce.stackexchange.com/questions/134111/salesforce-lightning-component-cache).
+
 Deployment
 ---
 This app is built and deployed via SFDX.
