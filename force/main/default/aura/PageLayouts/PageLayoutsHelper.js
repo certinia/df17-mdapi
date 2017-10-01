@@ -94,5 +94,17 @@
 			layoutName = objectType + '-' + objectType + ' Layout';
 
 		component.set('v.layoutName', layoutName);
+	},
+
+	updateEditability: function (component) {
+		var operation = component.get('v.operation'),
+			anchorType = component.get('v.anchorType'),
+			isRemoval = operation === 'Operation_Remove',
+			isPageAnchored = anchorType === 'Anchor_Type_Start'
+				|| anchorType === 'Anchor_Type_End';
+
+		component.find('behavior').set('v.disabled', isRemoval);
+		component.find('anchorType').set('v.disabled', isRemoval);
+		component.find('anchorField').set('v.disabled', isRemoval || isPageAnchored);
 	}
 })
