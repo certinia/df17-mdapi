@@ -12,8 +12,6 @@
 	<aura:attribute name="field" type="string" />
 	<aura:attribute name="anchorType" type="string" />
 	<aura:attribute name="anchorField" type="string" />
-	<aura:attribute name="message" type="string" />
-	<aura:attribute name="messageSeverity" type="string" />
 
 	<!-- Handlers -->
 	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
@@ -25,13 +23,6 @@
 		<aura:set attribute="actions">
 			<lightning:button variant="brand" label="{!$Label.c.ButtonTextUpdate}" onclick="{!c.onUpdateClicked}" />
 		</aura:set>
-
-		<!-- Messages -->
-		<aura:if isTrue="{!v.message}">
-			<ui:message title="Confirmation" severity="{!v.messageSeverity}" closable="false">
-				{!v.message}
-			</ui:message>
-		</aura:if>
 
 		<!-- Strategy -->
 		<lightning:select label="{!$Label.c.FieldStrategy}" value="{!v.strategy}">
