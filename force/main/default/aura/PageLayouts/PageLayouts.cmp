@@ -1,4 +1,4 @@
-<aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes">
+<aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes" >
 
 	<!-- Attributes -->
 	<aura:attribute name="objectTypes" type="List" />
@@ -15,27 +15,29 @@
 
 	<!-- Handlers -->
 	<aura:handler name="init" value="{!this}" action="{!c.onInit}" />
-	<aura:handler name="change" value="{!v.objectType}" action="{!c.onObjectTypeChanged}"/>
+	<aura:handler name="change" value="{!v.anchorType}" action="{!c.onAnchorTypeChanged}" />
+	<aura:handler name="change" value="{!v.objectType}" action="{!c.onObjectTypeChanged}" />
+	<aura:handler name="change" value="{!v.operation}" action="{!c.onOperationChanged}" />
 
-	<lightning:card>
+	<lightning:card >
 
 		<!-- Actions -->
-		<aura:set attribute="actions">
+		<aura:set attribute="actions" >
 			<lightning:button variant="brand" label="{!$Label.c.ButtonTextUpdate}" onclick="{!c.onUpdateClicked}" />
-		</aura:set>
+		</aura:set >
 
 		<!-- Strategy -->
-		<lightning:select label="{!$Label.c.FieldStrategy}" value="{!v.strategy}">
+		<lightning:select label="{!$Label.c.FieldStrategy}" value="{!v.strategy}" >
 			<option value="Strategy_Classic" label="{!$Label.c.Strategy_Classic}" />
 			<option value="Strategy_Native" label="{!$Label.c.Strategy_Native}" />
-		</lightning:select>
+		</lightning:select >
 
 		<!-- Object Type -->
 		<lightning:select label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" >
-			<aura:iteration items="{!v.objectTypes}" var="ot">
+			<aura:iteration items="{!v.objectTypes}" var="ot" >
 				<option value="{!ot.value}" label="{!ot.label}" />
-			</aura:iteration>
-		</lightning:select>
+			</aura:iteration >
+		</lightning:select >
 
 		<!-- Layout Name -->
 		<ui:inputText label="{!$Label.c.FieldLayoutName}" value="{!v.layoutName}" />
@@ -44,37 +46,37 @@
 		<lightning:select label="{!$Label.c.FieldField}" value="{!v.field}" >
 			<aura:iteration items="{!v.fields}" var="f">
 				<option value="{!f.value}" label="{!f.label}" />
-			</aura:iteration>
-		</lightning:select>
+			</aura:iteration >
+		</lightning:select >
 
 		<!-- Operation -->
-		<lightning:select label="{!$Label.c.FieldOperation}" value="{!v.operation}">
+		<lightning:select label="{!$Label.c.FieldOperation}" value="{!v.operation}" >
 			<option value="Operation_Add" label="{!$Label.c.Operation_Add}" />
 			<option value="Operation_Remove" label="{!$Label.c.Operation_Remove}" />
-		</lightning:select>
+		</lightning:select >
 
 		<!-- Behavior -->
-		<lightning:select label="{!$Label.c.FieldBehavior}" value="{!v.behavior}">
+		<lightning:select aura:id="behavior" label="{!$Label.c.FieldBehavior}" value="{!v.behavior}" >
 			<option value="Behaviour_Edit" label="{!$Label.c.Behaviour_Edit}" />
 			<option value="Behaviour_Required" label="{!$Label.c.Behaviour_Required}" />
 			<option value="Behaviour_Readonly" label="{!$Label.c.Behaviour_Readonly}" />
-		</lightning:select>
+		</lightning:select >
 
 		<!-- Anchor Type -->
-		<lightning:select label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}">
+		<lightning:select aura:id="anchorType" label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}" >
+			<option value="Anchor_Type_Start" label="{!$Label.c.Anchor_Type_Start}" />
 			<option value="Anchor_Type_After" label="{!$Label.c.Anchor_Type_After}" />
 			<option value="Anchor_Type_Before" label="{!$Label.c.Anchor_Type_Before}" />
 			<option value="Anchor_Type_End" label="{!$Label.c.Anchor_Type_End}" />
-			<option value="Anchor_Type_Start" label="{!$Label.c.Anchor_Type_Start}" />
-		</lightning:select>
+		</lightning:select >
 
 		<!-- Anchor Field -->
-		<lightning:select label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" >
-			<aura:iteration items="{!v.fields}" var="f">
+		<lightning:select aura:id="anchorField" label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" >
+			<aura:iteration items="{!v.fields}" var="f" >
 				<option value="{!f.value}" label="{!f.label}" />
-			</aura:iteration>
-		</lightning:select>
+			</aura:iteration >
+		</lightning:select >
 
-	</lightning:card>
+	</lightning:card >
 
-</aura:component>
+</aura:component >
