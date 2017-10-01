@@ -1,12 +1,14 @@
 ffdc-df17-mdapi
 ===
 
-[![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://deploy-to-sfdx.com) Deploy using this button and log into your Dev Hub when prompted.
+Deploy using the button below and log into your Dev Hub when prompted.
 
-![Sample App](docs/readme/account-page-layout-update.gif)
+[![Deploy](https://deploy-to-sfdx.com/dist/assets/images/DeployToSFDX.svg)](https://deploy-to-sfdx.com) 
 
 Background
 ---
+
+![Sample App](docs/readme/account-page-layout-update.gif)
 
 This repo accompanies the Dreamforce '17 session **[Build Self-configuring Apps with the Apex Metadata API](https://success.salesforce.com/Sessions#/session/a2q3A000001yu10QAA)**.
 
