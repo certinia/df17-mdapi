@@ -22,7 +22,7 @@ public class PageLayoutService
 	{
 		if (request.Strategy == STRATEGY_CLASSIC)
 		{
-			return new NativePageLayoutUpdater().updateLayout(request);
+			return new ClassicPageLayoutUpdater().updateLayout(request);
 		}
 		
 		if (request.Strategy == STRATEGY_NATIVE)
