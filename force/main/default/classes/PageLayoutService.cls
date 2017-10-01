@@ -20,19 +20,30 @@ public class PageLayoutService
 
 	public PageLayoutService.Response updateLayout(PageLayoutService.Request request)
 	{
-		if (request.Strategy == STRATEGY_CLASSIC)
+		PageLayoutService.Response response;
+		try
 		{
-			return new NativePageLayoutUpdater().updateLayout(request);
+			if (request.Strategy == STRATEGY_CLASSIC)
+			{
+				response = new NativePageLayoutUpdater().updateLayout(request);
+			}
+			else if (request.Strategy == STRATEGY_NATIVE)
+			{
+				response = new NativePageLayoutUpdater().updateLayout(request);
+			}
+			else
+			{
+				throw new PageLayoutException('Unknown strategy: ' + request.Strategy);
+			}
+		}
+		catch (Exception e)
+		{
+			response = new PageLayoutService.Response()
+				.withSuccess(false)
+				.withMessage(e.getMessage());
 		}
 		
-		if (request.Strategy == STRATEGY_NATIVE)
-		{
-			return new NativePageLayoutUpdater().updateLayout(request);
-		}
-		
-		return new PageLayoutService.Response()
-			.withSuccess(false)
-			.withMessage('Unknown strategy: ' + request.Strategy);
+		return response;
 	}
 
 	public DisplayOption[] getObjectTypes()
@@ -122,6 +133,27 @@ public class PageLayoutService
 			else if (this.Behavior == BEHAVIOUR_READONLY)
 			{
 				result.Behavior = Metadata.UiBehavior.READONLY;
+			}
+			
+			return result;
+		}
+
+		public MetadataService.LayoutItem asMetadataServiceField()
+		{
+			MetadataService.LayoutItem result = new MetadataService.LayoutItem();
+			result.field = this.Field;
+			
+			if (this.Behavior == BEHAVIOUR_EDIT)
+			{
+				result.Behavior = Metadata.UiBehavior.EDIT.name();
+			}
+			else if (this.Behavior == BEHAVIOUR_REQUIRED)
+			{
+				result.Behavior = Metadata.UiBehavior.REQUIRED.name();
+			}
+			else if (this.Behavior == BEHAVIOUR_READONLY)
+			{
+				result.Behavior = Metadata.UiBehavior.READONLY.name();
 			}
 			
 			return result;
