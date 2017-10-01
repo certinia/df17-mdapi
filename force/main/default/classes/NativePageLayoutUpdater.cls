@@ -17,7 +17,7 @@ public class NativePageLayoutUpdater
 		
 		return new PageLayoutService.Response()
 			.withSuccess(true)
-			.withMessage('Enqueued deployment ' + deploymentId + ' - ' + DateTime.now().format());
+			.withMessage('Enqueued deployment ' + deploymentId);
 	}
 
 	private void readLayout()
