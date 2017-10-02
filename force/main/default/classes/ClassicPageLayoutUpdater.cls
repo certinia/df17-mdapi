@@ -3,49 +3,36 @@
  */
 public class ClassicPageLayoutUpdater
 {
-	private static final String LOG_LINE_SEPARATOR = '\n';
-	private static final Integer TIMEOUT_MILLIS = 120000;
-
 	private PageLayoutService.Request request = null;
-	private MetadataService.MetadataPort metadataPort = null;
-	private MetadataService.Layout layout = null;
+	private Metadata.Layout layout = null;
 	private Boolean isDirty = false;
 
 	public PageLayoutService.Response updateLayout(PageLayoutService.Request request)
 	{
 		this.request = request;
 		
-		initMetadataPort();
 		readLayout();
 		modifyLayout();
-		saveLayout();
+		Id deploymentId = saveLayout();
 		
 		return new PageLayoutService.Response()
 			.withSuccess(true)
-			.withMessage('Successfully updated page layout');
-	}
-
-	private void initMetadataPort()
-	{
-		metadataPort = new MetadataService.MetadataPort();
-		metadataPort.timeout_x = TIMEOUT_MILLIS;
-		metadataPort.SessionHeader = new MetadataService.SessionHeader_element();
-		metadataPort.SessionHeader.sessionId = getSessionId();
+			.withMessage('Enqueued deployment ' + deploymentId);
 	}
 
 	private void readLayout()
 	{
-		MetadataService.Metadata[] records = metadataPort.readMetadata(
-			Metadata.MetadataType.Layout.name(),
+		Metadata.Metadata[] records = Metadata.Operations.retrieve(
+			Metadata.MetadataType.Layout,
 			new String[]{ this.request.LayoutName }
-		).getRecords();
+		);
 
 		if (records.isEmpty())
 		{
 			throw new PageLayoutService.PageLayoutException('No layouts for name ' + this.request.LayoutName);
 		}
 
-		this.layout = (MetadataService.Layout)records[0];
+		this.layout = (Metadata.Layout)records[0];
 	}
 
 	private void modifyLayout()
@@ -56,11 +43,11 @@ public class ClassicPageLayoutUpdater
 		{
 			for (Integer idxSection=0; idxSection<sizeSections; idxSection++)
 			{
-				MetadataService.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
+				Metadata.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
 				Integer sizeColumns = layoutSection.layoutColumns == null ? 0 : layoutSection.layoutColumns.size();
 				for (Integer idxColumn=0; idxColumn<sizeColumns; idxColumn++)
 				{
-					MetadataService.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
+					Metadata.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
 					Integer sizeItems = layoutColumn.layoutItems == null ? 0 : layoutColumn.layoutItems.size();
 					
 					if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_START && idxSection == 0 && idxColumn == 0)
@@ -76,7 +63,7 @@ public class ClassicPageLayoutUpdater
 					
 					for (Integer idxItem=0; idxItem<sizeItems; idxItem++)
 					{
-						MetadataService.LayoutItem anchorItem = layoutColumn.layoutItems[idxItem];
+						Metadata.LayoutItem anchorItem = layoutColumn.layoutItems[idxItem];
 						if (anchorItem.field == this.request.AnchorField)
 						{
 							if (this.request.AnchorType == PageLayoutService.ANCHOR_TYPE_BEFORE)
@@ -101,15 +88,15 @@ public class ClassicPageLayoutUpdater
 		{
 			for (Integer idxSection=0; idxSection<sizeSections; idxSection++)
 			{
-				MetadataService.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
+				Metadata.LayoutSection layoutSection = this.layout.layoutSections[idxSection];
 				Integer sizeColumns = layoutSection.layoutColumns.size();
 				for (Integer idxColumn=0; idxColumn < sizeColumns; idxColumn++)
 				{
-					MetadataService.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
+					Metadata.LayoutColumn layoutColumn = layoutSection.layoutColumns[idxColumn];
 					Integer sizeItems = layoutColumn.layoutItems == null ? 0 : layoutColumn.layoutItems.size();
 					for (Integer idxItem=0; idxItem < sizeItems; idxItem++)
 					{
-						MetadataService.LayoutItem layoutItem = layoutColumn.layoutItems[idxItem];
+						Metadata.LayoutItem layoutItem = layoutColumn.layoutItems[idxItem];
 						if (layoutItem.field == this.request.Field)
 						{
 							layoutColumn.layoutItems.remove(idxItem);
@@ -124,12 +111,12 @@ public class ClassicPageLayoutUpdater
 		}
 	}
 
-	private void addAt(Integer idx, MetadataService.LayoutColumn column)
+	private void addAt(Integer idx, Metadata.LayoutColumn column)
 	{
-		MetadataService.LayoutItem item = this.request.asMetadataServiceField();
+		Metadata.LayoutItem item = this.request.asField();
 
 		if (column.layoutItems == null) {
-			column.layoutItems = new MetadataService.LayoutItem[]{ item };
+			column.layoutItems = new Metadata.LayoutItem[]{ item };
 			return;
 		}
 
@@ -142,24 +129,19 @@ public class ClassicPageLayoutUpdater
 		column.layoutItems.add(idx, item);
 	}
 
-	private void saveLayout()
+	private Id saveLayout()
 	{
-		MetadataService.SaveResult saveResult = metadataPort.updateMetadata(new MetadataService.Metadata[] { this.layout })[0];
-		if (!saveResult.success)
-		{
-			String[] errors = new String[]{};
-			for (MetadataService.Error error : saveResult.errors)
-			{
-				errors.add(error.message);
-			}
-			throw new PageLayoutService.PageLayoutException(String.join(errors, LOG_LINE_SEPARATOR));
-		}
+		Metadata.DeployContainer mdContainer = new Metadata.DeployContainer();
+		mdContainer.addMetadata(this.layout);
+
+		return Metadata.Operations.enqueueDeployment(mdContainer, new DeployCallback());
 	}
 
-	private static String getSessionId()
+	private class DeployCallback implements Metadata.DeployCallback
 	{
-		//Workaround because Lightning Component sessions are not API enabled
-		//https://salesforce.stackexchange.com/questions/110515/getting-session-id-in-lightning
-		return Test.isRunningTest() ? UserInfo.getSessionId() : Page.SessionId.getContent().toString();
+		public void handleResult(Metadata.DeployResult result, Metadata.DeployCallbackContext context)
+		{
+			System.debug('Status: ' + result.status + '. ErrorCode: ' + result.errorStatusCode + '. Errors: ' + result.errorMessage);
+		}
 	}
 }
