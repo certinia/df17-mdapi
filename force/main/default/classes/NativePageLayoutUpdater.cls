@@ -141,7 +141,11 @@ public class NativePageLayoutUpdater
 	{
 		public void handleResult(Metadata.DeployResult result, Metadata.DeployCallbackContext context)
 		{
-			System.debug('Status: ' + result.status + '. ErrorCode: ' + result.errorStatusCode + '. Errors: ' + result.errorMessage);
+			EventBus.publish(new PageLayoutUpdate__e[]{
+				new PageLayoutUpdate__e(
+					DeployResult__c = JSON.serialize(result)
+				)
+			});		
 		}
 	}
 }
