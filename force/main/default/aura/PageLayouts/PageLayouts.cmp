@@ -19,6 +19,9 @@
 	<aura:handler name="change" value="{!v.objectType}" action="{!c.onObjectTypeChanged}" />
 	<aura:handler name="change" value="{!v.operation}" action="{!c.onOperationChanged}" />
 
+	<!-- Event monitor (displays results of async operations) -->
+	<c:EventMonitor/>
+
 	<lightning:card >
 
 		<!-- Actions -->
