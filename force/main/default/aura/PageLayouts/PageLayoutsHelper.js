@@ -59,11 +59,8 @@
 		var action = component.get('c.getObjectTypes');
 
 		action.setCallback(this, function (response) {
-			var objectTypes = response.getReturnValue(),
-				first = objectTypes && objectTypes[0] && objectTypes[0].value ? objectTypes[0].value : null;
-
+			var objectTypes = response.getReturnValue();
 			component.set('v.objectTypes', objectTypes);
-			component.set('v.objectType', first);
 		});
 
 		$A.enqueueAction(action);
@@ -106,5 +103,16 @@
 		component.find('behavior').set('v.disabled', isRemoval);
 		component.find('anchorType').set('v.disabled', isRemoval);
 		component.find('anchorField').set('v.disabled', isRemoval || isPageAnchored);
+	},
+
+	updateObjectTypeFromLocation: function (component, location) {
+		var objectType = component.get('v.objectType'),
+			locationPattern = /sObject\/([A-Z_]*)/gi,
+			locationMatch = locationPattern.exec(location),
+			parsedObjectType = locationMatch[1];
+
+		if (parsedObjectType && parsedObjectType !== objectType) {
+			component.set('v.objectType', parsedObjectType);
+		}
 	}
 })
