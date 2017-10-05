@@ -48,12 +48,19 @@
 	},
 
 	onReceiveNotification: function (component, platformEvent) {
-		var payload = platformEvent.data.payload;
-		this.displayToast(component, payload.Severity__c, payload.Messages__c);
+		this.displayToast(component, platformEvent.data.payload);
 	},
 
-	displayToast: function (component, type, message) {
-		var toastEvent = $A.get('e.force:showToast');
+	displayToast: function (component, payload) {
+		var toastEvent = $A.get('e.force:showToast'),
+			result = JSON.parse(payload.DeployResult__c),
+			type = result.success ? 'Success' : 'Error',
+			message = result.success ? 'Successfully updated page layout' : 'Error updating page layout';
+
+		if (result.messages && result.messages[0] && result.messages[0].problem) {
+			message = result.messages[0].problem;
+		}
+
 		toastEvent.setParams({
 			type: type,
 			message: message
