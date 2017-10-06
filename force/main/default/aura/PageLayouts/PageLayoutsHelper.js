@@ -1,58 +1,59 @@
 ({
-	updateLayout: function (component) {
-		var action = component.get('c.updateLayout'),
-			layoutRequest = {
-				Strategy: component.get('v.strategy'),
-				ObjectType: component.get('v.objectType'),
-				LayoutName: component.get('v.layoutName'),
-				Operation: component.get('v.operation'),
-				Behavior: component.get('v.behavior'),
-				Field: component.get('v.field'),
-				AnchorType: component.get('v.anchorType'),
-				AnchorField: component.get('v.anchorField')
-			};
-
-		action.setParams({
-			requestString: JSON.stringify(layoutRequest)
+	buildLayoutRequest: function (component) {
+		return JSON.stringify({
+			Strategy: component.get('v.strategy'),
+			ObjectType: component.get('v.objectType'),
+			LayoutName: component.get('v.layoutName'),
+			Operation: component.get('v.operation'),
+			Behavior: component.get('v.behavior'),
+			Field: component.get('v.field'),
+			AnchorType: component.get('v.anchorType'),
+			AnchorField: component.get('v.anchorField')
 		});
+	},
 
-		action.setCallback(this, function (response) {
-			var state = response.getState(),
-				toast = $A.get("e.force:showToast"),
-				success = false,
-				result,
-				message,
-				type;
+	enqueueAction: function (component, name, params) {
+		return new Promise(function (resolve, reject) {
+			var action = component.get(name);
+			action.setParams(params);
+			action.setCallback(this, function (response) {
+				var state = response.getState(),
+					error = response.getError() || 'Unknown error';
 
-			if (state === 'SUCCESS') {
-				result = response.getReturnValue() || {};
-				success = result.Success;
-				message = result.Message;
-			} else if (state === 'ERROR') {
-				result = response.getError();
-				if (result && result[0] && result[0].message) {
-					message = result[0].message;
+				if (state === 'SUCCESS') {
+					resolve(response.getReturnValue());
 				}
-			} else {
-				message = 'Unknown state: ' + state;
-			}
 
-			if (success) {
-				message = message || 'Success';
-				type = 'success';
-			} else {
-				message = message || 'Error';
-				type = 'error';
-			}
+				if (error && error[0] && error[0].message) {
+					error = error[0].message;
+				}
 
-			toast.setParams({
-				message: message,
-				type: type
+				reject(error);
 			});
-			toast.fire();
-		});
 
-		$A.enqueueAction(action);
+			$A.enqueueAction(action);
+		});
+	},
+
+	updateLayout: function (component) {
+		var me = this,
+			toast = $A.get("e.force:showToast"),
+			message, type;
+
+		return me
+			.enqueueAction(component, 'c.updateLayout', me.buildLayoutRequest())
+			.then(function (result) {
+				message = result.Message;
+				type = 'Success';
+			})
+			.catch(function (error) {
+				message = error;
+				type = 'error';
+			})
+			.then(function () {
+				toast.setParams({ message: message, type: type });
+				toast.fire();
+			});
 	},
 
 	getObjectTypes: function (component) {
