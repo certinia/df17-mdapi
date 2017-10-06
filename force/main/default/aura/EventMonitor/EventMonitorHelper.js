@@ -3,7 +3,7 @@
 		var me = this,
 			cometd = component.get('v.cometd'),
 			location = window.location,
-			cometdUrl = location.protocol + '//' + location.hostname + '/cometd/40.0/';
+			cometdUrl = location.protocol + '//' + location.hostname + '/cometd/41.0/';
 
 		cometd.configure({
 			url: cometdUrl,
