@@ -15,7 +15,11 @@
 	enqueueAction: function (component, name, params) {
 		return new Promise(function (resolve, reject) {
 			var action = component.get(name);
-			action.setParams(params);
+
+			if (params) {
+				action.setParams(params);
+			}
+
 			action.setCallback(this, function (response) {
 				var state = response.getState(),
 					error = response.getError() || 'Unknown error';
@@ -35,6 +39,33 @@
 		});
 	},
 
+	getObjectTypes: function (component) {
+		return this
+			.enqueueAction(component, 'c.getObjectTypes')
+			.then(function (result) {
+				component.set('v.objectTypes', result);
+			});
+	},
+
+	getFields: function (component) {
+		var params = {
+				objectType: component.get('v.objectType')
+			};
+
+		return this
+			.enqueueAction(component, 'c.getFields', params)
+			.then(function (result) {
+				var first;
+				component.set('v.fields', result);
+
+				if (result && result[0] && result[0].value) {
+					first = result[0].value;
+					component.set('v.field', first);
+					component.set('v.anchorField', first);
+				}
+			});
+	},
+
 	updateLayout: function (component) {
 		var me = this,
 			toast = $A.get("e.force:showToast"),
@@ -48,43 +79,13 @@
 			})
 			.catch(function (error) {
 				message = error;
-				type = 'error';
+				type = 'Error';
 			})
 			.then(function () {
+				message = message || type;
 				toast.setParams({ message: message, type: type });
 				toast.fire();
 			});
-	},
-
-	getObjectTypes: function (component) {
-		var action = component.get('c.getObjectTypes');
-
-		action.setCallback(this, function (response) {
-			var objectTypes = response.getReturnValue();
-			component.set('v.objectTypes', objectTypes);
-		});
-
-		$A.enqueueAction(action);
-	},
-
-	getFields: function (component) {
-		var action = component.get('c.getFields'),
-			objectType = component.get('v.objectType');
-
-		action.setParams({
-			objectType: objectType
-		});
-
-		action.setCallback(this, function (response) {
-			var fields = response.getReturnValue(),
-				first = fields && fields[0] && fields[0].value ? fields[0].value : null;
-
-			component.set('v.fields', fields);
-			component.set('v.field', first);
-			component.set('v.anchorField', first);
-		});
-
-		$A.enqueueAction(action);
 	},
 
 	updateLayoutName: function (component) {
