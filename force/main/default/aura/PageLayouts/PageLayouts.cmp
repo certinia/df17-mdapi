@@ -30,55 +30,43 @@
 		</aura:set >
 
 		<!-- Strategy -->
-		<lightning:select label="{!$Label.c.FieldStrategy}" value="{!v.strategy}" >
+		<lightning:combobox label="{!$Label.c.FieldStrategy}" value="{!v.strategy}" >
 			<option value="Strategy_Classic" label="{!$Label.c.Strategy_Classic}" />
 			<option value="Strategy_Native" label="{!$Label.c.Strategy_Native}" />
-		</lightning:select >
+		</lightning:combobox >
 
 		<!-- Object Type -->
-		<lightning:select label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" >
-			<aura:iteration items="{!v.objectTypes}" var="ot" >
-				<option value="{!ot.value}" label="{!ot.label}" />
-			</aura:iteration >
-		</lightning:select >
+		<lightning:combobox label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" options="{!v.objectTypes}" />
 
 		<!-- Layout Name -->
 		<ui:inputText label="{!$Label.c.FieldLayoutName}" value="{!v.layoutName}" />
 
 		<!-- Field -->
-		<lightning:select label="{!$Label.c.FieldField}" value="{!v.field}" >
-			<aura:iteration items="{!v.fields}" var="f">
-				<option value="{!f.value}" label="{!f.label}" />
-			</aura:iteration >
-		</lightning:select >
+		<lightning:combobox label="{!$Label.c.FieldField}" value="{!v.field}" options="{!v.fields}" />
 
 		<!-- Operation -->
-		<lightning:select label="{!$Label.c.FieldOperation}" value="{!v.operation}" >
+		<lightning:combobox label="{!$Label.c.FieldOperation}" value="{!v.operation}" >
 			<option value="Operation_Add" label="{!$Label.c.Operation_Add}" />
 			<option value="Operation_Remove" label="{!$Label.c.Operation_Remove}" />
-		</lightning:select >
+		</lightning:combobox >
 
 		<!-- Behavior -->
-		<lightning:select aura:id="behavior" label="{!$Label.c.FieldBehavior}" value="{!v.behavior}" >
+		<lightning:combobox aura:id="behavior" label="{!$Label.c.FieldBehavior}" value="{!v.behavior}" >
 			<option value="Behaviour_Edit" label="{!$Label.c.Behaviour_Edit}" />
 			<option value="Behaviour_Required" label="{!$Label.c.Behaviour_Required}" />
 			<option value="Behaviour_Readonly" label="{!$Label.c.Behaviour_Readonly}" />
-		</lightning:select >
+		</lightning:combobox >
 
 		<!-- Anchor Type -->
-		<lightning:select aura:id="anchorType" label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}" >
+		<lightning:combobox aura:id="anchorType" label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}" >
 			<option value="Anchor_Type_Start" label="{!$Label.c.Anchor_Type_Start}" />
 			<option value="Anchor_Type_After" label="{!$Label.c.Anchor_Type_After}" />
 			<option value="Anchor_Type_Before" label="{!$Label.c.Anchor_Type_Before}" />
 			<option value="Anchor_Type_End" label="{!$Label.c.Anchor_Type_End}" />
-		</lightning:select >
+		</lightning:combobox >
 
 		<!-- Anchor Field -->
-		<lightning:select aura:id="anchorField" label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" >
-			<aura:iteration items="{!v.fields}" var="f" >
-				<option value="{!f.value}" label="{!f.label}" />
-			</aura:iteration >
-		</lightning:select >
+		<lightning:combobox aura:id="anchorField" label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" options="{!v.fields}" />
 
 	</lightning:card >
 
