@@ -22,4 +22,19 @@ public with sharing class PageLayoutsController
 	{
 		return new PageLayoutService().getFields(objectType);
 	}
+	
+	@AuraEnabled
+	public static String getObjectType(String recordId)
+	{
+		String result = '';
+		try
+		{
+			Schema.SObjectType objectType = Id.valueOf(recordId).getSObjectType();
+			result = objectType.getDescribe().getName();
+		}
+		catch (Exception e)
+		{}
+
+		return result;
+	}
 }

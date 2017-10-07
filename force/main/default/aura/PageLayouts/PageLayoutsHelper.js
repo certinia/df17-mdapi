@@ -1,7 +1,13 @@
 ({
-	updateLayout: function (component) {
-		var action = component.get('c.updateLayout'),
-			layoutRequest = {
+	/*
+	 * Create a PageLayoutService.Request object
+	 */
+	buildLayoutRequest: function (component) {
+		// For now, needs to be converted to JSON and deserialized
+		// on the server. This is a workaround to avoid internal server
+		// errors on sending custom classes as arguments to the server.
+		return {
+			requestString: JSON.stringify({
 				Strategy: component.get('v.strategy'),
 				ObjectType: component.get('v.objectType'),
 				LayoutName: component.get('v.layoutName'),
@@ -10,92 +16,93 @@
 				Field: component.get('v.field'),
 				AnchorType: component.get('v.anchorType'),
 				AnchorField: component.get('v.anchorField')
+			})
+		};
+	},
+
+	/*
+	 * Promisified wrapper to make a server call to the Apex controller
+	 */
+	enqueueAction: function (component, name, params) {
+		return new Promise(function (resolve, reject) {
+			// Get the AuraEnabled method on the Apex controller
+			var action = component.get(name);
+
+			// Apply the parameters if there are any
+			if (params) {
+				action.setParams(params);
+			}
+
+			// Handle the method result
+			action.setCallback(this, function (response) {
+				var state = response.getState(),
+					error = response.getError() || 'Unknown error';
+
+				// On success, return the result
+				if (state === 'SUCCESS') {
+					resolve(response.getReturnValue());
+				} else {
+					// On failure, try to get the first (usually most
+					// useful) error message
+					if (error && error[0] && error[0].message) {
+						error = error[0].message;
+					}
+
+					// On failure, reject the promise
+					console.error(error); // eslint-disable-line no-console
+					reject(error);
+				}
+			});
+
+			// Add the action to the queue
+			$A.enqueueAction(action);
+		});
+	},
+
+	/*
+	 * Called on changes to ObjectType to discover all applicable SObjectFields
+	 */
+	getFields: function (component) {
+		var params = {
+				objectType: component.get('v.objectType')
 			};
 
-		action.setParams({
-			requestString: JSON.stringify(layoutRequest)
-		});
-
-		action.setCallback(this, function (response) {
-			var state = response.getState(),
-				toast = $A.get("e.force:showToast"),
-				success = false,
-				result,
-				message,
-				type;
-
-			if (state === 'SUCCESS') {
-				result = response.getReturnValue() || {};
-				success = result.Success;
-				message = result.Message;
-			} else if (state === 'ERROR') {
-				result = response.getError();
-				if (result && result[0] && result[0].message) {
-					message = result[0].message;
-				}
-			} else {
-				message = 'Unknown state: ' + state;
-			}
-
-			if (success) {
-				message = message || 'Success';
-				type = 'success';
-			} else {
-				message = message || 'Error';
-				type = 'error';
-			}
-
-			toast.setParams({
-				message: message,
-				type: type
+		return this
+			// Call server side method to find all SObjectFields for the current SObjectType.
+			// Ideally, we would do this client side, but Lightning components
+			// don't yet have global variables for describes.
+			.enqueueAction(component, 'c.getFields', params)
+			.then(function (result) {
+				// Populate the fields and anchorFields picklists
+				component.set('v.fields', result);
 			});
-			toast.fire();
-		});
-
-		$A.enqueueAction(action);
 	},
 
+	/*
+	 * Called on init to discover all SObjectTypes
+	 */
 	getObjectTypes: function (component) {
-		var action = component.get('c.getObjectTypes');
+		var me = this;
 
-		action.setCallback(this, function (response) {
-			var objectTypes = response.getReturnValue(),
-				first = objectTypes && objectTypes[0] && objectTypes[0].value ? objectTypes[0].value : null;
-
-			component.set('v.objectTypes', objectTypes);
-			component.set('v.objectType', first);
-		});
-
-		$A.enqueueAction(action);
+		return me
+			// Call server side method to find all SObjectTypes.
+			// Ideally, we would do this client side, but Lightning components
+			// don't yet have global variables for describes.
+			.enqueueAction(component, 'c.getObjectTypes')
+			.then(function (result) {
+				// Populate the ObjectTypes picklist
+				component.set('v.objectTypes', result);
+				component.set('v.hasReadObjectTypes', true);
+			})
+			.then(function () {
+				// Attempt to set the ObjectType from the current page
+				return me.updateObjectTypeFromLocation(component, window.location.hash);
+			});
 	},
 
-	getFields: function (component) {
-		var action = component.get('c.getFields'),
-			objectType = component.get('v.objectType');
-
-		action.setParams({
-			objectType: objectType
-		});
-
-		action.setCallback(this, function (response) {
-			var fields = response.getReturnValue(),
-				first = fields && fields[0] && fields[0].value ? fields[0].value : null;
-
-			component.set('v.fields', fields);
-			component.set('v.field', first);
-			component.set('v.anchorField', first);
-		});
-
-		$A.enqueueAction(action);
-	},
-
-	updateLayoutName: function (component) {
-		var objectType = component.get('v.objectType'),
-			layoutName = objectType + '-' + objectType + ' Layout';
-
-		component.set('v.layoutName', layoutName);
-	},
-
+	/*
+	 * Marks fields as disabled when they aren't applicable
+	 */
 	updateEditability: function (component) {
 		var operation = component.get('v.operation'),
 			anchorType = component.get('v.anchorType'),
@@ -103,8 +110,108 @@
 			isPageAnchored = anchorType === 'Anchor_Type_Start'
 				|| anchorType === 'Anchor_Type_End';
 
+		// Behavior controls whether you can/must edit a newly added field.
+		// Not applicable on field removals.
 		component.find('behavior').set('v.disabled', isRemoval);
+
+		// Anchors define where to place a newly added field.
+		// Not appicable on field removals.
 		component.find('anchorType').set('v.disabled', isRemoval);
+
+		// Anchor fields define which field to inject the newly added field before or after.
+		// Not applicable on field removals, nor on field additions where the field is dumped
+		// at the start or end of the page.
 		component.find('anchorField').set('v.disabled', isRemoval || isPageAnchored);
+	},
+
+	/*
+	 * The heart of this Lightning Component;
+	 * updates SObject page layouts using the Metadata API
+	 */
+	updateLayout: function (component) {
+		var me = this,
+			params = me.buildLayoutRequest(component),
+			toast, message, type;
+
+		return me
+			.enqueueAction(component, 'c.updateLayout', params)
+			.then(function (result) {
+				// on success, build the toast parameters
+				message = result.Message;
+				type = 'Success';
+			})
+			.catch(function (error) {
+				// on failure, build the toast parameters
+				message = error;
+				type = 'Error';
+			})
+			.then(function () {
+				// if there's no message, just use type as a fallback (Error/Success)
+				message = message || type;
+
+				// build and fire the toast notification
+				toast = $A.get("e.force:showToast");
+				toast.setParams({ message: message, type: type });
+				toast.fire();
+			});
+	},
+
+	/*
+	 * Guess the default Page Layout name for the current SObjectType
+	 */
+	updateLayoutName: function (component) {
+		var objectType = component.get('v.objectType'),
+			// Default layouts are usually of the form "Account-Account layout"
+			layoutName = objectType + '-' + objectType + ' Layout';
+
+		// Set the value of the LayoutName text field
+		component.set('v.layoutName', layoutName);
+	},
+
+	/*
+	 * Attempt to use the current ObjectType from the current page.
+	 * For example, if I'm on an Account record, I probably want to change Account layouts.
+	 */
+	updateObjectTypeFromLocation: function (component, location) {
+		var me = this,
+			hasReadObjectTypes = component.get('v.hasReadObjectTypes'),
+			pattern, match;
+
+		// Don't bother attempting to set ObjectType until we've
+		// populated the ObjectTypes picklist
+		if (!hasReadObjectTypes) {
+			return Promise.resolve();
+		}
+
+		return Promise
+			.resolve()
+			.then(function () {
+				// Attempt to read objectType from the current record id
+				// Url is of the form "sObject/0013D00000LvX46QAF/view"
+				pattern = new RegExp('sObject\/([A-Za-z0-9]{18})\/');
+				match = location.match(pattern);
+				if (match && match[1]) {
+					// Call server side method to resolve SObjectType from Id.
+					// Ideally, we would do this client side, but Lightning components
+					// don't yet have global variables for describes
+					return me.enqueueAction(component, 'c.getObjectType', { recordId: match[1]});
+				}
+
+				// Attempt to read objectType from the current page
+				// Url is of the form "/sObject/Account/list?filterName=Recent"
+				pattern = new RegExp('sObject\/([A-Za-z0-9_]+)\/');
+				match = location.match(pattern);
+				if (match && match[1]) {
+					return match[1];
+				}
+
+				return null;
+			})
+			.then(function (objectType) {
+				// Set the value of the objectType picklist
+				if (objectType) {
+					component.set('v.objectType', objectType);
+				}
+			});
 	}
 })
