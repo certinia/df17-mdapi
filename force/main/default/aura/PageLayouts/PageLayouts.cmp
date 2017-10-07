@@ -3,6 +3,7 @@
 	<!-- Attributes -->
 	<aura:attribute name="objectTypes" type="List" />
 	<aura:attribute name="fields" type="List" />
+	<aura:attribute name="hasReadObjectTypes" type="Boolean" default="false" />
 	
 	<aura:attribute name="strategy" type="string" />
 	<aura:attribute name="objectType" type="string" />

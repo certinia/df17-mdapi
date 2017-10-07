@@ -80,7 +80,9 @@
 	 * Called on init to discover all SObjectTypes
 	 */
 	getObjectTypes: function (component) {
-		return this
+		var me = this;
+
+		return me
 			// Call server side method to find all SObjectTypes.
 			// Ideally, we would do this client side, but Lightning components
 			// don't yet have global variables for describes.
@@ -88,6 +90,11 @@
 			.then(function (result) {
 				// Populate the ObjectTypes picklist
 				component.set('v.objectTypes', result);
+				component.set('v.hasReadObjectTypes', true);
+			})
+			.then(function () {
+				// Attempt to set the ObjectType from the current page
+				return me.updateObjectTypeFromLocation(component, window.location.hash);
 			});
 	},
 
@@ -164,7 +171,14 @@
 	 */
 	updateObjectTypeFromLocation: function (component, location) {
 		var me = this,
+			hasReadObjectTypes = component.get('v.hasReadObjectTypes'),
 			pattern, match;
+
+		// Don't bother attempting to set ObjectType until we've
+		// populated the ObjectTypes picklist
+		if (!hasReadObjectTypes) {
+			return Promise.resolve();
+		}
 
 		return Promise
 			.resolve()
