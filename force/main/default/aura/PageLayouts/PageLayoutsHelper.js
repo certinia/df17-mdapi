@@ -6,16 +6,18 @@
 		// For now, needs to be converted to JSON and deserialized
 		// on the server. This is a workaround to avoid internal server
 		// errors on sending custom classes as arguments to the server.
-		return JSON.stringify({
-			Strategy: component.get('v.strategy'),
-			ObjectType: component.get('v.objectType'),
-			LayoutName: component.get('v.layoutName'),
-			Operation: component.get('v.operation'),
-			Behavior: component.get('v.behavior'),
-			Field: component.get('v.field'),
-			AnchorType: component.get('v.anchorType'),
-			AnchorField: component.get('v.anchorField')
-		});
+		return {
+			requestString: JSON.stringify({
+				Strategy: component.get('v.strategy'),
+				ObjectType: component.get('v.objectType'),
+				LayoutName: component.get('v.layoutName'),
+				Operation: component.get('v.operation'),
+				Behavior: component.get('v.behavior'),
+				Field: component.get('v.field'),
+				AnchorType: component.get('v.anchorType'),
+				AnchorField: component.get('v.anchorField')
+			})
+		};
 	},
 
 	/*
@@ -39,17 +41,17 @@
 				// On success, return the result
 				if (state === 'SUCCESS') {
 					resolve(response.getReturnValue());
-				}
+				} else {
+					// On failure, try to get the first (usually most
+					// useful) error message
+					if (error && error[0] && error[0].message) {
+						error = error[0].message;
+					}
 
-				// On failure, try to get the first (usually most
-				// useful) error message
-				if (error && error[0] && error[0].message) {
-					error = error[0].message;
+					// On failure, reject the promise
+					console.error(error); // eslint-disable-line no-console
+					reject(error);
 				}
-
-				// On failure, reject the promise
-				console.error(error); // eslint-disable-line no-console
-				reject(error);
 			});
 
 			// Add the action to the queue
@@ -128,10 +130,11 @@
 	 */
 	updateLayout: function (component) {
 		var me = this,
+			params = me.buildLayoutRequest(component),
 			toast, message, type;
 
 		return me
-			.enqueueAction(component, 'c.updateLayout', me.buildLayoutRequest())
+			.enqueueAction(component, 'c.updateLayout', params)
 			.then(function (result) {
 				// on success, build the toast parameters
 				message = result.Message;
