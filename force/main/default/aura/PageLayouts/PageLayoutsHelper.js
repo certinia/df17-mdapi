@@ -63,11 +63,12 @@
 	 * Called on changes to ObjectType to discover all applicable SObjectFields
 	 */
 	getFields: function (component) {
-		var params = {
+		var me = this,
+			params = {
 				objectType: component.get('v.objectType')
 			};
 
-		return this
+		return me
 			// Call server side method to find all SObjectFields for the current SObjectType.
 			// Ideally, we would do this client side, but Lightning components
 			// don't yet have global variables for describes.
@@ -75,6 +76,7 @@
 			.then(function (result) {
 				// Populate the fields and anchorFields picklists
 				component.set('v.fields', result);
+				component.set('v.field', me.head(result));
 			});
 	},
 
@@ -92,12 +94,20 @@
 			.then(function (result) {
 				// Populate the ObjectTypes picklist
 				component.set('v.objectTypes', result);
+				component.set('v.objectType', me.head(result));
 				component.set('v.hasReadObjectTypes', true);
 			})
 			.then(function () {
 				// Attempt to set the ObjectType from the current page
 				return me.updateObjectTypeFromLocation(component, window.location.hash);
 			});
+	},
+
+	head: function (array) {
+		if (array && array[0] && array[0].value) {
+			return array[0].value;
+		}
+		return null;
 	},
 
 	/*
