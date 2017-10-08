@@ -1,7 +1,6 @@
 ({
 	connectCometd: function (component) {
-		var me = this,
-			cometd = component.get('v.cometd'),
+		var cometd = component.get('v.cometd'),
 			location = window.location,
 			cometdUrl = location.protocol + '//' + location.hostname + '/cometd/40.0/';
 
@@ -15,19 +14,32 @@
 
 		// Establish CometD connection
 		cometd.handshake(function (handshakeReply) {
-			var subscriptions = component.get('v.cometdSubscriptions'),
-				newSubscription;
+			var eventSubscriptions = component.get('v.eventSubscriptions'),
+				cometdSubscriptions;
 
 			if (handshakeReply.successful) {
-				// Subscribe to platform event
-				newSubscription = cometd.subscribe('/event/PageLayoutUpdate__e', function (platformEvent) {
-					me.onReceiveNotification(component, platformEvent);
+				// Create a CometD subcription for each platform event subscription
+				cometdSubscriptions = eventSubscriptions.map(function (eventSubscription) {
+					return cometd.subscribe('/event/' + eventSubscription, function (platformEvent) {
+						var monitoredEvent = component.getEvent("monitoredEvent");
+
+						monitoredEvent.setParams({
+							objectType: eventSubscription,
+							event: platformEvent
+						});
+
+						monitoredEvent.fire();
+					});
 				});
 
-				// Save subscription for later
-				subscriptions.push(newSubscription);
-				component.set('v.cometdSubscriptions', subscriptions);
+				// Remember subscriptions so we can unsubscribe on unload
+				component.set('v.cometdSubscriptions', cometdSubscriptions);
 			}
+		});
+
+		// Disconnect CometD when leaving page
+		window.addEventListener('unload', function (event) {
+			helper.disconnectCometd(component);
 		});
 	},
 
@@ -45,27 +57,5 @@
 
 		// Disconnect CometD
 		cometd.disconnect();
-	},
-
-	onReceiveNotification: function (component, platformEvent) {
-		this.displayToast(component, platformEvent.data.payload);
-	},
-
-	displayToast: function (component, payload) {
-		var toastEvent = $A.get('e.force:showToast'),
-			result = JSON.parse(payload.DeployResult__c),
-			type = result.success ? 'Success' : 'Error',
-			message = result.success ? 'Successfully updated page layout' : 'Error updating page layout';
-
-		if (result.messages && result.messages[0] && result.messages[0].problem) {
-			message = result.messages[0].problem;
-		}
-
-		toastEvent.setParams({
-			type: type,
-			message: message
-		});
-
-		toastEvent.fire();
 	}
 });

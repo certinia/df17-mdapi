@@ -20,6 +20,7 @@
 	<aura:handler name="change" value="{!v.anchorType}" action="{!c.onAnchorTypeChanged}" />
 	<aura:handler name="change" value="{!v.objectType}" action="{!c.onObjectTypeChanged}" />
 	<aura:handler name="change" value="{!v.operation}" action="{!c.onOperationChanged}" />
+	<aura:handler name="monitoredEvent" event="c:monitoredEvent" action="{!c.onMonitoredEvent}"/>
 
 	<!-- Event monitor (displays results of async operations) -->
 	<c:EventMonitor/>

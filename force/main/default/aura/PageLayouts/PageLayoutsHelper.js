@@ -103,11 +103,42 @@
 			});
 	},
 
+	/*
+	 * Displays toast notifications on receiving PageLayoutUpdate__e events
+	 */
+	handleMonitoredEvent: function (event) {
+		var platformEvent = event.getParam('event'),
+			result = JSON.parse(platformEvent.data.payload.DeployResult__c),
+			type = result.success ? 'Success' : 'Error',
+			message = result.success ? 'Successfully updated page layout' : 'Error updating page layout';
+
+		if (result.messages && result.messages[0] && result.messages[0].problem) {
+			message = result.messages[0].problem;
+		}
+
+		this.showToast(type, message);
+	},
+
+	/*
+	 * Gets value from first element in array
+	 */
 	head: function (array) {
 		if (array && array[0] && array[0].value) {
 			return array[0].value;
 		}
 		return null;
+	},
+
+	/*
+	 * Builds and fires toast
+	 */
+	showToast: function (type, message) {
+		var toast = $A.get("e.force:showToast");
+		toast.setParams({
+			message: message || type, // when there's no message, use type as fallback
+			type: type
+		});
+		toast.fire();
 	},
 
 	/*
@@ -141,7 +172,7 @@
 	updateLayout: function (component) {
 		var me = this,
 			params = me.buildLayoutRequest(component),
-			toast, message, type;
+			message, type;
 
 		return me
 			.enqueueAction(component, 'c.updateLayout', params)
@@ -156,13 +187,8 @@
 				type = 'Error';
 			})
 			.then(function () {
-				// if there's no message, just use type as a fallback (Error/Success)
-				message = message || type;
-
 				// build and fire the toast notification
-				toast = $A.get("e.force:showToast");
-				toast.setParams({ message: message, type: type });
-				toast.fire();
+				me.showToast(type, message);
 			});
 	},
 
