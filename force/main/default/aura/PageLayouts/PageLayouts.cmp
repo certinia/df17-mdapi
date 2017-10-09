@@ -23,7 +23,7 @@
 	<aura:handler name="monitoredEvent" event="c:monitoredEvent" action="{!c.onMonitoredEvent}"/>
 
 	<!-- Event monitor (displays results of async operations) -->
-	<c:EventMonitor/>
+	<c:EventMonitor eventSubscriptions="['PageLayoutUpdate__e']"/>
 
 	<lightning:card >
 

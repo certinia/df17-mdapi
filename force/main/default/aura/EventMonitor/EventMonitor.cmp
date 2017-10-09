@@ -8,6 +8,6 @@
 	<aura:attribute name="sessionId" type="String"/>
 	<aura:attribute name="cometd" type="Object"/>
 	<aura:attribute name="cometdSubscriptions" type="Object[]" default="[]"/>
-	<aura:attribute name="eventSubscriptions" type="String[]" default="['PageLayoutUpdate__e']"/>
+	<aura:attribute name="eventSubscriptions" type="String[]" required="true" description="Array of platform event SObjectTypes you want to monitor" />
 	
 </aura:component>
