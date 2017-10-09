@@ -13,6 +13,10 @@
 		helper.updateObjectTypeFromLocation(component, location);
 	},
 
+	onMonitoredEvent: function (component, event, helper) {
+		helper.handleMonitoredEvent(event);
+	},
+
 	onObjectTypeChanged: function (component, event, helper) {
 		helper.getFields(component);
 		helper.updateLayoutName(component);

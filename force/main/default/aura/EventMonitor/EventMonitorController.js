@@ -14,11 +14,6 @@
 		var action = component.get('c.getSessionId');
 		component.set('v.cometdSubscriptions', []);
 
-		// Disconnect CometD when leaving page
-		window.addEventListener('unload', function (event) {
-			helper.disconnectCometd(component);
-		});
-
 		action.setCallback(this, function (response) {
 			if (component.isValid() && response.getState() === 'SUCCESS') {
 				component.set('v.sessionId', response.getReturnValue());
