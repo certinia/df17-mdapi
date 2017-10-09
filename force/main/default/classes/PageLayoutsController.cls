@@ -12,29 +12,20 @@ public with sharing class PageLayoutsController
 	}
 
 	@AuraEnabled
-	public static PageLayoutService.DisplayOption[] getObjectTypes()
+	public static DescribeService.DisplayOption[] getObjectTypes()
 	{
-		return new PageLayoutService().getObjectTypes();
+		return new DescribeService().getObjectTypes();
 	}
 
 	@AuraEnabled
-	public static PageLayoutService.DisplayOption[] getFields(String objectType)
+	public static DescribeService.DisplayOption[] getFields(String objectType)
 	{
-		return new PageLayoutService().getFields(objectType);
+		return new DescribeService().getFields(objectType);
 	}
 	
 	@AuraEnabled
 	public static String getObjectType(String recordId)
 	{
-		String result = '';
-		try
-		{
-			Schema.SObjectType objectType = Id.valueOf(recordId).getSObjectType();
-			result = objectType.getDescribe().getName();
-		}
-		catch (Exception e)
-		{}
-
-		return result;
+		return new DescribeService().getObjectType(recordId);
 	}
 }
