@@ -4,6 +4,7 @@
 	},
 
 	onInit: function (component, event, helper) {
+		helper.initComboboxes(component);
 		helper.getObjectTypes(component);
 		helper.updateEditability(component);
 	},

@@ -130,6 +130,43 @@
 	},
 
 	/*
+	 * Inits non-dynamic comboboxes
+	 */
+	initComboboxes: function (component) {
+		var me = this;
+		me.populateCombobox(component, 'v.strategies', [
+			'Strategy_Classic',
+			'Strategy_Native'
+		]);
+		me.populateCombobox(component, 'v.operations', [
+			'Operation_Add',
+			'Operation_Remove'
+		]);
+		me.populateCombobox(component, 'v.behaviors', [
+			'Behaviour_Edit',
+			'Behaviour_Required',
+			'Behaviour_Readonly'
+		]);
+		me.populateCombobox(component, 'v.anchorTypes', [
+			'Anchor_Type_Start',
+			'Anchor_Type_After',
+			'Anchor_Type_Before',
+			'Anchor_Type_End'
+		]);
+	},
+
+	/*
+	 * Sets combobox options from a set of label names
+	 */
+	populateCombobox: function (component, name, values) {
+		values = values || [];
+		component.set(name, values.map(function (value) {
+			var label = $A.get("$Label." + value) || value;
+			return { value: value, label: label };
+		}));
+	},
+
+	/*
 	 * Builds and fires toast
 	 */
 	showToast: function (type, message) {

@@ -1,8 +1,12 @@
 <aura:component controller="PageLayoutsController" implements="flexipage:availableForAllPageTypes" >
 
 	<!-- Attributes -->
-	<aura:attribute name="objectTypes" type="List" />
+	<aura:attribute name="anchorTypes" type="List" />
+	<aura:attribute name="behaviors" type="List" />
 	<aura:attribute name="fields" type="List" />
+	<aura:attribute name="operations" type="List" />
+	<aura:attribute name="objectTypes" type="List" />
+	<aura:attribute name="strategies" type="List" />
 	<aura:attribute name="hasReadObjectTypes" type="Boolean" default="false" />
 	
 	<aura:attribute name="strategy" type="string" />
@@ -32,44 +36,15 @@
 			<lightning:button variant="brand" label="{!$Label.c.ButtonTextUpdate}" onclick="{!c.onUpdateClicked}" />
 		</aura:set >
 
-		<!-- Strategy -->
-		<lightning:combobox label="{!$Label.c.FieldStrategy}" value="{!v.strategy}" >
-			<option value="Strategy_Classic" label="{!$Label.c.Strategy_Classic}" />
-			<option value="Strategy_Native" label="{!$Label.c.Strategy_Native}" />
-		</lightning:combobox >
-
-		<!-- Object Type -->
-		<lightning:combobox label="{!$Label.c.FieldObjectType}" value="{!v.objectType}" options="{!v.objectTypes}" />
-
-		<!-- Layout Name -->
+		<!-- Form fields -->
+		<lightning:combobox name="Strategy" label="Strategy" value="{!v.strategy}" options="{!v.strategies}"/>
+		<lightning:combobox name="ObjectType" label="ObjectType" value="{!v.objectType}" options="{!v.objectTypes}" />
 		<ui:inputText label="{!$Label.c.FieldLayoutName}" value="{!v.layoutName}" />
-
-		<!-- Field -->
-		<lightning:combobox label="{!$Label.c.FieldField}" value="{!v.field}" options="{!v.fields}" />
-
-		<!-- Operation -->
-		<lightning:combobox label="{!$Label.c.FieldOperation}" value="{!v.operation}" >
-			<option value="Operation_Add" label="{!$Label.c.Operation_Add}" />
-			<option value="Operation_Remove" label="{!$Label.c.Operation_Remove}" />
-		</lightning:combobox >
-
-		<!-- Behavior -->
-		<lightning:combobox aura:id="behavior" label="{!$Label.c.FieldBehavior}" value="{!v.behavior}" >
-			<option value="Behaviour_Edit" label="{!$Label.c.Behaviour_Edit}" />
-			<option value="Behaviour_Required" label="{!$Label.c.Behaviour_Required}" />
-			<option value="Behaviour_Readonly" label="{!$Label.c.Behaviour_Readonly}" />
-		</lightning:combobox >
-
-		<!-- Anchor Type -->
-		<lightning:combobox aura:id="anchorType" label="{!$Label.c.FieldAnchorType}" value="{!v.anchorType}" >
-			<option value="Anchor_Type_Start" label="{!$Label.c.Anchor_Type_Start}" />
-			<option value="Anchor_Type_After" label="{!$Label.c.Anchor_Type_After}" />
-			<option value="Anchor_Type_Before" label="{!$Label.c.Anchor_Type_Before}" />
-			<option value="Anchor_Type_End" label="{!$Label.c.Anchor_Type_End}" />
-		</lightning:combobox >
-
-		<!-- Anchor Field -->
-		<lightning:combobox aura:id="anchorField" label="{!$Label.c.FieldAnchorField}" value="{!v.anchorField}" options="{!v.fields}" />
+		<lightning:combobox name="Field" label="Field" value="{!v.field}" options="{!v.fields}" />
+		<lightning:combobox name="Operation" label="Operation" value="{!v.operation}" options="{!v.operations}"/>
+		<lightning:combobox name="Behavior" label="Behavior" value="{!v.behavior}" options="{!v.behaviors}" aura:id="behavior" />
+		<lightning:combobox name="Anchor Type" label="Anchor Type" value="{!v.anchorType}" options="{!v.anchorTypes}" aura:id="anchorType" />
+		<lightning:combobox name="Anchor Field" label="Anchor Field" value="{!v.anchorField}" options="{!v.fields}" aura:id="anchorField" />
 
 	</lightning:card >
 
